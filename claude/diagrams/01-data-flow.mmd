@@ -1,0 +1,33 @@
+---
+title: Cashflow App — Request / Data Flow
+---
+flowchart TD
+    Browser -->|"GET /"| Root["app/page.tsx\n(redirect)"]
+    Root -->|"not authed"| Login["app/login/page.tsx"]
+    Root -->|"authed"| Dashboard["app/dashboard/page.tsx\n(Server Component)"]
+
+    Login -->|"signIn('credentials')"| NextAuth["app/api/auth/[...nextauth]\n(NextAuth handler)"]
+    NextAuth -->|"authorize()"| AuthLib["lib/auth.ts\nbcrypt.compare()"]
+    AuthLib --> PrismaDB[("PostgreSQL\nvia Prisma")]
+    NextAuth -->|"JWT cookie"| Browser
+
+    Browser -->|"GET /register"| Register["app/register/page.tsx"]
+    Register -->|"POST /api/auth/register"| RegAPI["app/api/auth/register/route.ts"]
+    RegAPI --> PrismaDB
+
+    Dashboard -->|"server action"| Actions["lib/actions/transaction.ts\ngetSummary()\ngetRecentTransactions()"]
+    Actions --> PrismaDB
+    Dashboard --> SummaryCards["SummaryCards"]
+    Dashboard --> RecentTx["RecentTransactions"]
+
+    Browser -->|"GET /income\nor /expense"| ClientPage["income/page.tsx\nor expense/page.tsx\n(Client Component)"]
+    ClientPage -->|"fetch GET /api/transactions?type=X"| TxAPI["app/api/transactions/route.ts"]
+    TxAPI --> PrismaDB
+    ClientPage -->|"fetch GET /api/user"| UserAPI["app/api/user/route.ts\n(reads JWT session)"]
+
+    ClientPage --> Modal["TransactionFormModal"]
+    Modal -->|"createTransaction()\nupdateTransaction()"| Actions
+    Actions --> PrismaDB
+
+    ClientPage --> Table["TransactionTable"]
+    Table -->|"deleteTransaction()"| Actions

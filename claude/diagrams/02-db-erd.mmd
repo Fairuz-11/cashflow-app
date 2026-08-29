@@ -1,0 +1,57 @@
+---
+title: Cashflow App — Entity Relationship Diagram
+---
+erDiagram
+    User {
+        string id PK "cuid"
+        string name "nullable"
+        string email "unique"
+        string password "bcrypt hash"
+        datetime emailVerified "nullable"
+        string image "nullable"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Transaction {
+        string id PK "cuid"
+        enum type "income | expense"
+        string description
+        decimal amount "15,2"
+        datetime transactionDate
+        string userId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Account {
+        string id PK "cuid"
+        string userId FK
+        string type
+        string provider
+        string providerAccountId
+        string refresh_token "nullable"
+        string access_token "nullable"
+        int expires_at "nullable"
+        string token_type "nullable"
+        string scope "nullable"
+        string id_token "nullable"
+        string session_state "nullable"
+    }
+
+    Session {
+        string id PK "cuid"
+        string sessionToken "unique"
+        string userId FK
+        datetime expires
+    }
+
+    VerificationToken {
+        string identifier
+        string token "unique"
+        datetime expires
+    }
+
+    User ||--o{ Transaction : "has"
+    User ||--o{ Account : "has"
+    User ||--o{ Session : "has"
