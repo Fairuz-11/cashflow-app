@@ -5,14 +5,7 @@ import { requireAuth } from "@/lib/session"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { TransactionData } from "@/types/transaction"
-
-// Schema validasi
-export const transactionSchema = z.object({
-  type: z.enum(["income", "expense"]),
-  description: z.string().min(1, "Keterangan tidak boleh kosong"),
-  amount: z.number().positive("Nominal harus lebih dari 0"),
-  transactionDate: z.date(),
-})
+import { transactionSchema } from "@/lib/validations/transaction"
 
 // Helper: cast Prisma result ke TransactionData
 function toTransactionData(t: any): TransactionData {
