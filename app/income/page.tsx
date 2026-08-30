@@ -6,14 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TransactionFormModal } from "@/components/transactions/transaction-form-modal"
 import { TransactionTable } from "@/components/transactions/transaction-table"
-import { Transaction } from "@prisma/client"
+import { TransactionData } from "@/types/transaction"
 import { useRouter } from "next/navigation"
 
 export default function IncomePage() {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingTransaction, setEditingTransaction] = useState<(Transaction & { amount: number }) | null>(null)
-  const [transactions, setTransactions] = useState<(Transaction & { amount: number })[]>([])
+  const [editingTransaction, setEditingTransaction] = useState<TransactionData | null>(null)
+  const [transactions, setTransactions] = useState<TransactionData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [userName, setUserName] = useState<string | null>(null)
 
@@ -54,7 +54,7 @@ export default function IncomePage() {
     setIsModalOpen(true)
   }
 
-  const handleEditClick = (transaction: Transaction & { amount: number }) => {
+  const handleEditClick = (transaction: TransactionData) => {
     setEditingTransaction(transaction)
     setIsModalOpen(true)
   }

@@ -1,4 +1,4 @@
-  // This is your Prisma schema file,
+// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -65,22 +65,19 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-enum TransactionType {
-  income
-  expense
-}
-
+// MySQL tidak support enum natively di Prisma dengan cara yang sama,
+// jadi kita pakai String dengan validasi di application level
 model Transaction {
-  id               String          @id @default(cuid())
-  type             TransactionType
+  id               String   @id @default(cuid())
+  type             String   // "income" | "expense"
   description      String
-  amount           Decimal         @db.Decimal(15, 2)
-  transactionDate  DateTime        @map("transaction_date")
-  userId           String          @map("user_id")
-  createdAt        DateTime        @default(now()) @map("created_at")
-  updatedAt        DateTime        @updatedAt @map("updated_at")
-  
-  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount           Decimal  @db.Decimal(15, 2)
+  transactionDate  DateTime @map("transaction_date")
+  userId           String   @map("user_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([type])

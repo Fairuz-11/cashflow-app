@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Transaction } from "@prisma/client"
+import { TransactionData } from "@/types/transaction"
 
 interface RecentTransactionsProps {
-  transactions: (Transaction & { amount: number })[]
+  transactions: TransactionData[]
 }
 
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {

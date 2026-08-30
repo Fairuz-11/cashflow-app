@@ -1,14 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Transaction } from "@prisma/client"
+import { TransactionData } from "@/types/transaction"
 import { Button } from "@/components/ui/button"
 import { deleteTransaction } from "@/lib/actions/transaction"
 import { useRouter } from "next/navigation"
 
 interface TransactionTableProps {
-  transactions: (Transaction & { amount: number })[]
-  onEdit: (transaction: Transaction & { amount: number }) => void
+  transactions: TransactionData[]
+  onEdit: (transaction: TransactionData) => void
 }
 
 export function TransactionTable({ transactions, onEdit }: TransactionTableProps) {

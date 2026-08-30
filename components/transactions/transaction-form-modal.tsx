@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading"
 import { createTransaction, updateTransaction } from "@/lib/actions/transaction"
-import { Transaction } from "@prisma/client"
+import { TransactionData } from "@/types/transaction"
 
 interface TransactionFormModalProps {
   isOpen: boolean
   onClose: () => void
   type: "income" | "expense"
-  transaction?: (Transaction & { amount: number }) | null
+  transaction?: TransactionData | null
   onSuccess: () => void
 }
 
