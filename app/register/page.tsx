@@ -32,15 +32,12 @@ function FloatingInput({
 
   return (
     <div className="relative">
-      {/* left icon */}
       <div
         className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200"
         style={{ color: focused ? "#2563eb" : "#9ca3af" }}
       >
         {icon}
       </div>
-
-      {/* input */}
       <input
         id={id}
         type={type}
@@ -57,8 +54,6 @@ function FloatingInput({
           boxShadow: focused ? "0 0 0 3px rgba(37,99,235,0.12)" : "none",
         }}
       />
-
-      {/* floating label */}
       <label
         htmlFor={id}
         className="absolute left-11 transition-all duration-200 pointer-events-none select-none"
@@ -138,25 +133,24 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex">
 
-      {/* ── LEFT PANEL ── */}
+      {/* ── LEFT PANEL — identik 1:1 dengan login ── */}
       <div
         className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-12"
         style={{ background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%)" }}
       >
-        {/* blobs */}
-        <div className="absolute top-[-100px] left-[-100px] w-96 h-96 rounded-full" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <div className="absolute top-[80px] left-[60px] w-48 h-48 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
-        <div className="absolute bottom-[-80px] right-[-80px] w-80 h-80 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }} />
-        <div className="absolute bottom-[100px] right-[40px] w-36 h-36 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
-        <div className="absolute top-1/3 right-[-40px] w-64 h-64 rounded-full" style={{ background: "rgba(255,255,255,0.04)" }} />
-        <div className="absolute top-[180px] right-[100px] w-10 h-10 rounded-full border-2" style={{ borderColor: "rgba(255,255,255,0.18)" }} />
-        <div className="absolute bottom-[240px] left-[80px] w-16 h-16 rounded-full border-2" style={{ borderColor: "rgba(255,255,255,0.14)" }} />
-        <div className="absolute top-[320px] right-[200px] w-5 h-5 rounded-full" style={{ background: "rgba(255,255,255,0.22)" }} />
-        <div className="absolute top-[130px] right-[260px] w-3 h-3 rounded-full" style={{ background: "rgba(255,255,255,0.28)" }} />
-        <div className="absolute bottom-[320px] left-[220px] w-4 h-4 rounded-full" style={{ background: "rgba(255,255,255,0.18)" }} />
-        <div className="absolute bottom-[160px] right-[160px] w-6 h-6 rounded-full" style={{ background: "rgba(255,255,255,0.12)" }} />
+        {/* blobs — posisi & ukuran identik */}
+        <div className="absolute top-[-80px] right-[-80px] w-72 h-72 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }} />
+        <div className="absolute top-[60px] right-[40px] w-40 h-40 rounded-full" style={{ background: "rgba(255,255,255,0.06)" }} />
+        <div className="absolute bottom-[-60px] left-[-60px] w-80 h-80 rounded-full" style={{ background: "rgba(255,255,255,0.07)" }} />
+        <div className="absolute bottom-[120px] left-[30px] w-32 h-32 rounded-full" style={{ background: "rgba(255,255,255,0.05)" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full" style={{ background: "rgba(255,255,255,0.03)" }} />
+        <div className="absolute top-[200px] right-[120px] w-8 h-8 rounded-full border-2" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+        <div className="absolute bottom-[200px] right-[80px] w-14 h-14 rounded-full border-2" style={{ borderColor: "rgba(255,255,255,0.15)" }} />
+        <div className="absolute top-[380px] left-[200px] w-5 h-5 rounded-full" style={{ background: "rgba(255,255,255,0.2)" }} />
+        <div className="absolute top-[150px] left-[180px] w-3 h-3 rounded-full" style={{ background: "rgba(255,255,255,0.25)" }} />
+        <div className="absolute bottom-[280px] right-[200px] w-4 h-4 rounded-full" style={{ background: "rgba(255,255,255,0.18)" }} />
 
-        {/* logo */}
+        {/* logo — identik */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
             <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +161,7 @@ export default function RegisterPage() {
           <span className="text-white font-bold text-2xl tracking-tight">Cashflow</span>
         </div>
 
-        {/* content */}
+        {/* content — struktur identik, teks berbeda */}
         <div className="relative z-10 space-y-7">
           <div>
             <h2 className="text-4xl font-bold text-white leading-tight tracking-tight">
@@ -177,34 +171,37 @@ export default function RegisterPage() {
               Gratis selamanya. Daftar sekarang dan mulai catat transaksi keuangan Anda dalam hitungan menit.
             </p>
           </div>
-          <div className="space-y-4">
-            {[{ n: "1", label: "Buat akun gratis" }, { n: "2", label: "Catat transaksi pertama Anda" }, { n: "3", label: "Pantau rekap keuangan" }].map((item) => (
-              <div key={item.n} className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
-                  style={{ background: "rgba(255,255,255,0.2)" }}>
-                  {item.n}
+          <div className="space-y-3">
+            {["Buat akun dalam 1 menit", "Catat uang masuk & keluar", "Pantau profit setiap saat"].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.2)" }}>
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <span className="text-blue-100 text-sm font-medium">{item.label}</span>
+                <span className="text-blue-100 text-sm font-medium">{item}</span>
               </div>
             ))}
           </div>
-          <div className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5"
-            style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
-            <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-            </svg>
-            <span className="text-white text-sm font-medium">Gratis selamanya, tanpa kartu kredit</span>
+          {/* stats pills — identik */}
+          <div className="flex gap-3 pt-1">
+            {[{ val: "100%", sub: "Gratis selamanya" }, { val: "Simpel", sub: "Mudah digunakan" }].map((s) => (
+              <div key={s.val} className="rounded-2xl px-4 py-3 flex-1" style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
+                <p className="text-white font-bold text-xl">{s.val}</p>
+                <p className="text-blue-200 text-xs mt-0.5">{s.sub}</p>
+              </div>
+            ))}
           </div>
         </div>
 
         <p className="relative z-10 text-blue-300 text-xs">© 2024 Cashflow. Aplikasi pencatat keuangan sederhana.</p>
       </div>
 
-      {/* ── RIGHT PANEL ── */}
+      {/* ── RIGHT PANEL — struktur identik dengan login ── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-sm">
 
-          {/* mobile logo */}
+          {/* mobile logo — identik */}
           <div className="lg:hidden flex items-center gap-2 justify-center mb-8">
             <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,7 +212,7 @@ export default function RegisterPage() {
             <span className="text-blue-600 font-bold text-xl tracking-tight">Cashflow</span>
           </div>
 
-          {/* card */}
+          {/* card — identik dengan login */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <div className="mb-7">
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Buat akun baru</h1>
@@ -277,6 +274,7 @@ export default function RegisterPage() {
                 icon={IconShield}
               />
 
+              {/* tombol — identik dengan login */}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -290,6 +288,7 @@ export default function RegisterPage() {
               </button>
             </form>
 
+            {/* divider — identik */}
             <div className="my-6 flex items-center gap-3">
               <div className="flex-1 h-px bg-gray-100" />
               <span className="text-xs text-gray-300 font-medium">atau</span>
@@ -304,6 +303,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          {/* footer — identik */}
           <p className="text-center text-xs text-gray-400 mt-5">
             Aman & terlindungi. Data Anda tidak pernah dibagikan.
           </p>
