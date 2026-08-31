@@ -25,6 +25,8 @@ export default async function DashboardPage() {
           totalIncome={summary.totalIncome}
           totalExpense={summary.totalExpense}
           profit={summary.profit}
+          expenseThisWeek={summary.expenseThisWeek}
+          expenseThisMonth={summary.expenseThisMonth}
         />
 
         {/* Recent Transactions */}

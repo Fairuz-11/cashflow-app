@@ -20,7 +20,25 @@ function toTransactionData(t: any): TransactionData {
 export async function getSummary() {
   const user = await requireAuth()
 
-  const [incomeResult, expenseResult] = await Promise.all([
+  const now = new Date()
+
+  // Awal minggu ini (Senin)
+  const startOfWeek = new Date(now)
+  const day = startOfWeek.getDay()
+  const diff = day === 0 ? -6 : 1 - day // Senin = 1
+  startOfWeek.setDate(now.getDate() + diff)
+  startOfWeek.setHours(0, 0, 0, 0)
+
+  // Awal bulan ini
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  startOfMonth.setHours(0, 0, 0, 0)
+
+  const [
+    incomeResult,
+    expenseResult,
+    expenseWeekResult,
+    expenseMonthResult,
+  ] = await Promise.all([
     prisma.transaction.aggregate({
       where: { userId: user.id, type: "income" },
       _sum: { amount: true },
@@ -29,13 +47,31 @@ export async function getSummary() {
       where: { userId: user.id, type: "expense" },
       _sum: { amount: true },
     }),
+    prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "expense",
+        transactionDate: { gte: startOfWeek },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "expense",
+        transactionDate: { gte: startOfMonth },
+      },
+      _sum: { amount: true },
+    }),
   ])
 
   const totalIncome = Number(incomeResult._sum.amount || 0)
   const totalExpense = Number(expenseResult._sum.amount || 0)
   const profit = totalIncome - totalExpense
+  const expenseThisWeek = Number(expenseWeekResult._sum.amount || 0)
+  const expenseThisMonth = Number(expenseMonthResult._sum.amount || 0)
 
-  return { totalIncome, totalExpense, profit }
+  return { totalIncome, totalExpense, profit, expenseThisWeek, expenseThisMonth }
 }
 
 // Get recent transactions
