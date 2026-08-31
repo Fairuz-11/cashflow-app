@@ -24,94 +24,54 @@ export default function IncomePage() {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch("/api/user")
-      if (response.ok) {
-        const data = await response.json()
-        setUserName(data.name)
-      }
-    } catch (error) {
-      console.error("Failed to fetch user info:", error)
-    }
+      const res = await fetch("/api/user")
+      if (res.ok) setUserName((await res.json()).name)
+    } catch {}
   }
 
   const fetchTransactions = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch("/api/transactions?type=income")
-      if (response.ok) {
-        const data = await response.json()
-        setTransactions(data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch transactions:", error)
-    } finally {
-      setIsLoading(false)
-    }
+      const res = await fetch("/api/transactions?type=income")
+      if (res.ok) setTransactions(await res.json())
+    } catch {}
+    finally { setIsLoading(false) }
   }
 
-  const handleAddClick = () => {
-    setEditingTransaction(null)
-    setIsModalOpen(true)
-  }
+  const handleSuccess = () => { fetchTransactions(); router.refresh() }
 
-  const handleEditClick = (transaction: TransactionData) => {
-    setEditingTransaction(transaction)
-    setIsModalOpen(true)
-  }
-
-  const handleModalClose = () => {
-    setIsModalOpen(false)
-    setEditingTransaction(null)
-  }
-
-  const handleSuccess = () => {
-    fetchTransactions()
-    router.refresh()
-  }
-
-  const totalIncome = transactions.reduce((sum, t) => sum + t.amount, 0)
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount)
-  }
+  const totalIncome = transactions.reduce((s, t) => s + t.amount, 0)
+  const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
 
   return (
     <DashboardLayout userName={userName}>
-      <div className="space-y-6">
+      <div className="space-y-4 lg:space-y-6">
+
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Uang Masuk</h1>
-            <p className="text-gray-600 mt-1">
-              Kelola semua transaksi pemasukan Anda
-            </p>
+            <h1 className="text-xl lg:text-3xl font-bold text-gray-900">Uang Masuk</h1>
+            <p className="text-gray-500 text-sm mt-0.5 hidden sm:block">Kelola semua transaksi pemasukan Anda</p>
           </div>
-          <Button onClick={handleAddClick}>
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Button onClick={() => { setEditingTransaction(null); setIsModalOpen(true) }} size="sm">
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Tambah Pemasukan
+            <span className="hidden sm:inline">Tambah Pemasukan</span>
+            <span className="sm:hidden">Tambah</span>
           </Button>
         </div>
 
-        {/* Total Card */}
+        {/* Total card */}
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
-                  Total Pemasukan
-                </p>
-                <p className="text-3xl font-bold text-green-600">
-                  {formatCurrency(totalIncome)}
-                </p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Total Pemasukan</p>
+                <p className="text-2xl lg:text-3xl font-bold text-green-600">{fmt(totalIncome)}</p>
               </div>
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
@@ -119,31 +79,27 @@ export default function IncomePage() {
           </CardContent>
         </Card>
 
-        {/* Transactions Table */}
+        {/* Table */}
         <Card>
-          <CardHeader>
-            <CardTitle>Daftar Pemasukan</CardTitle>
+          <CardHeader className="px-4 py-3 lg:px-6 lg:py-4">
+            <CardTitle className="text-base lg:text-lg">Daftar Pemasukan</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4 lg:px-6 lg:pb-6">
             {isLoading ? (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-600">Memuat data...</p>
+              <div className="text-center py-10">
+                <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                <p className="text-sm text-gray-500">Memuat data...</p>
               </div>
             ) : (
-              <TransactionTable
-                transactions={transactions}
-                onEdit={handleEditClick}
-              />
+              <TransactionTable transactions={transactions} onEdit={(t) => { setEditingTransaction(t); setIsModalOpen(true) }} />
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Modal */}
       <TransactionFormModal
         isOpen={isModalOpen}
-        onClose={handleModalClose}
+        onClose={() => { setIsModalOpen(false); setEditingTransaction(null) }}
         type="income"
         transaction={editingTransaction}
         onSuccess={handleSuccess}

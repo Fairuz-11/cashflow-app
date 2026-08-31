@@ -11,11 +11,12 @@ export default async function DashboardPage() {
 
   return (
     <DashboardLayout userName={user.name}>
-      <div className="space-y-6">
+      <div className="space-y-4 lg:space-y-6">
+
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Rekap</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-xl lg:text-3xl font-bold text-gray-900">Rekap</h1>
+          <p className="text-gray-500 text-sm mt-0.5 hidden sm:block">
             Ringkasan keuangan Anda secara keseluruhan
           </p>
         </div>
@@ -31,6 +32,7 @@ export default async function DashboardPage() {
 
         {/* Recent Transactions */}
         <RecentTransactions transactions={recentTransactions} />
+
       </div>
     </DashboardLayout>
   )

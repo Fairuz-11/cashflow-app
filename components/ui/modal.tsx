@@ -1,7 +1,6 @@
 "use client"
 
 import { ReactNode, useEffect } from "react"
-import { Button } from "./button"
 
 interface ModalProps {
   isOpen: boolean
@@ -9,69 +8,53 @@ interface ModalProps {
   title: string
   children: ReactNode
   footer?: ReactNode
-  size?: "sm" | "md" | "lg" | "xl"
 }
 
-export function Modal({
-  isOpen,
-  onClose,
-  title,
-  children,
-  footer,
-  size = "md"
-}: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "unset"
-    }
-    
-    return () => {
-      document.body.style.overflow = "unset"
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "unset"
+    return () => { document.body.style.overflow = "unset" }
   }, [isOpen])
 
   if (!isOpen) return null
 
-  const sizes = {
-    sm: "max-w-md",
-    md: "max-w-lg",
-    lg: "max-w-2xl",
-    xl: "max-w-4xl"
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
-      
-      {/* Modal */}
-      <div className={`relative bg-white rounded-lg shadow-xl w-full ${sizes[size]} mx-4 max-h-[90vh] flex flex-col`}>
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+
+      {/* Modal panel
+          Mobile  : slide up dari bawah, rounded top corners, full width
+          Tablet+ : centered card, rounded semua sisi, max-w-lg
+      */}
+      <div className="relative bg-white w-full sm:max-w-lg sm:mx-4 sm:rounded-2xl rounded-t-2xl shadow-xl flex flex-col max-h-[90vh]">
+
+        {/* Drag handle (mobile only) */}
+        <div className="sm:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
+
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        
+
         {/* Content */}
         <div className="px-6 py-4 overflow-y-auto flex-1">
           {children}
         </div>
-        
+
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+          <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0">
             {footer}
           </div>
         )}
