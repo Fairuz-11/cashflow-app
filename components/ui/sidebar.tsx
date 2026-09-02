@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 interface SidebarProps {
   userName?: string | null
@@ -10,6 +10,7 @@ interface SidebarProps {
 
 export function Sidebar({ userName, onLogout }: SidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
 
   const menuItems = [
     {
@@ -42,6 +43,12 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
     },
   ]
 
+  const handleNavClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault()
+    router.push(path)
+    router.refresh()
+  }
+
   return (
     <>
       {/* ── DESKTOP SIDEBAR (lg+) ─────────────────── */}
@@ -72,6 +79,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                 <li key={item.path}>
                   <Link
                     href={item.path}
+                    onClick={(e) => handleNavClick(e, item.path)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                       isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
                     }`}
@@ -141,6 +149,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
               <Link
                 key={item.path}
                 href={item.path}
+                onClick={(e) => handleNavClick(e, item.path)}
                 className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
                   isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
                 }`}
