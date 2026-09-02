@@ -196,3 +196,53 @@ export async function getTransaction(id: string): Promise<TransactionData | null
 
   return toTransactionData(transaction)
 }
+
+// Get weekly data for chart
+export async function getWeeklyData() {
+  const user = await requireAuth()
+
+  // Get last 5 weeks of data
+  const weeks = []
+  for (let i = 4; i >= 0; i--) {
+    const endDate = new Date()
+    endDate.setDate(endDate.getDate() - (i * 7))
+    endDate.setHours(23, 59, 59, 999)
+    
+    const startDate = new Date(endDate)
+    startDate.setDate(startDate.getDate() - 6)
+    startDate.setHours(0, 0, 0, 0)
+
+    const [income, expense] = await Promise.all([
+      prisma.transaction.aggregate({
+        where: {
+          userId: user.id,
+          type: "income",
+          transactionDate: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        _sum: { amount: true },
+      }),
+      prisma.transaction.aggregate({
+        where: {
+          userId: user.id,
+          type: "expense",
+          transactionDate: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        _sum: { amount: true },
+      }),
+    ])
+
+    weeks.push({
+      label: endDate.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }),
+      income: Number(income._sum.amount || 0),
+      expense: Number(expense._sum.amount || 0),
+    })
+  }
+
+  return weeks
+}
