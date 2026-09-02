@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce paint on scroll */
+img, video {
+  content-visibility: auto;
+}
+
+/* Hardware acceleration for animations */
+.animate-spin, .hover\:scale-105:hover {
+  will-change: transform;
+}

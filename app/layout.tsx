@@ -25,12 +25,17 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
-  themeColor: "#2563eb",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
+  icons: {
+    icon: '/logocash.png',
+    apple: '/logocash.png',
   },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#2563eb',
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -40,27 +45,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" href="/logocash.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logocash.png" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  // Unregister old service workers
-                  navigator.serviceWorker.getRegistrations().then((registrations) => {
-                    registrations.forEach((reg) => reg.unregister());
-                  }).then(() => {
-                    // Register new service worker
-                    navigator.serviceWorker.register('/sw.js')
-                      .then((reg) => console.log('SW registered:', reg))
-                      .catch((err) => console.log('SW registration failed:', err));
-                  });
-                });
-              }
-            `,
-          }}
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>

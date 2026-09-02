@@ -1,8 +1,19 @@
 import { requireAuth } from "@/lib/session"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
-import { SummaryCards } from "@/components/dashboard/summary-cards"
-import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { getSummary, getRecentTransactions } from "@/lib/actions/transaction"
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+
+// Lazy load heavy components
+const SummaryCards = dynamic(() => import('@/components/dashboard/summary-cards').then(mod => ({ default: mod.SummaryCards })), {
+  loading: () => <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4"><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /></div>
+})
+
+const RecentTransactions = dynamic(() => import('@/components/dashboard/recent-transactions').then(mod => ({ default: mod.RecentTransactions })), {
+  loading: () => <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+})
+
+export const revalidate = 60 // ISR: revalidate every 60 seconds
 
 export default async function DashboardPage() {
   const user = await requireAuth()
@@ -22,16 +33,20 @@ export default async function DashboardPage() {
         </div>
 
         {/* Summary Cards */}
-        <SummaryCards
-          totalIncome={summary.totalIncome}
-          totalExpense={summary.totalExpense}
-          profit={summary.profit}
-          expenseThisWeek={summary.expenseThisWeek}
-          expenseThisMonth={summary.expenseThisMonth}
-        />
+        <Suspense fallback={<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4"><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /><div className="h-28 bg-gray-100 rounded-xl animate-pulse" /></div>}>
+          <SummaryCards
+            totalIncome={summary.totalIncome}
+            totalExpense={summary.totalExpense}
+            profit={summary.profit}
+            expenseThisWeek={summary.expenseThisWeek}
+            expenseThisMonth={summary.expenseThisMonth}
+          />
+        </Suspense>
 
         {/* Recent Transactions */}
-        <RecentTransactions transactions={recentTransactions} />
+        <Suspense fallback={<div className="h-64 bg-gray-100 rounded-xl animate-pulse" />}>
+          <RecentTransactions transactions={recentTransactions} />
+        </Suspense>
 
       </div>
     </DashboardLayout>
