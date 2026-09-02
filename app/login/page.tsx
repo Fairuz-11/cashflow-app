@@ -252,15 +252,10 @@ export default function LoginPage() {
 
             <div className="my-6 flex items-center gap-3">
               <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-xs text-gray-300 font-medium">atau</span>
-              <div className="flex-1 h-px bg-gray-100" />
             </div>
 
-            <p className="text-center text-sm text-gray-500">
-              Belum punya akun?{" "}
-              <Link href="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
-                Daftar sekarang
-              </Link>
+            <p className="text-center text-xs text-gray-400">
+              Aman & terlindungi. Data Anda tidak pernah dibagikan.
             </p>
           </div>
 
