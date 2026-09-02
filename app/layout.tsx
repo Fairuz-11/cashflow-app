@@ -16,6 +16,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cashflow - Aplikasi Pencatat Keuangan",
   description: "Aplikasi pencatat cashflow sederhana dan modern",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Cashflow",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  themeColor: "#2563eb",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -24,6 +39,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/logocash.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logocash.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('SW registered:', reg))
+                    .catch((err) => console.log('SW registration failed:', err));
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>
           {children}
