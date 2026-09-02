@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
 interface SidebarProps {
@@ -43,8 +42,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
     },
   ]
 
-  const handleNavClick = (e: React.MouseEvent, path: string) => {
-    e.preventDefault()
+  const handleNavClick = (path: string) => {
     router.push(path)
     router.refresh()
   }
@@ -77,16 +75,15 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
               const isActive = pathname === item.path
               return (
                 <li key={item.path}>
-                  <Link
-                    href={item.path}
-                    onClick={(e) => handleNavClick(e, item.path)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  <button
+                    onClick={() => handleNavClick(item.path)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full text-left ${
                       isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
                     }`}
                   >
                     {item.icon}
                     <span className="font-medium">{item.name}</span>
-                  </Link>
+                  </button>
                 </li>
               )
             })}
@@ -146,10 +143,9 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
           {menuItems.map((item) => {
             const isActive = pathname === item.path
             return (
-              <Link
+              <button
                 key={item.path}
-                href={item.path}
-                onClick={(e) => handleNavClick(e, item.path)}
+                onClick={() => handleNavClick(item.path)}
                 className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
                   isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
                 }`}
@@ -158,7 +154,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                   {item.icon}
                 </div>
                 <span className="text-[10px] font-semibold">{item.name}</span>
-              </Link>
+              </button>
             )
           })}
         </div>
