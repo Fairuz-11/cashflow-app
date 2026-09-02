@@ -47,9 +47,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then((reg) => console.log('SW registered:', reg))
-                    .catch((err) => console.log('SW registration failed:', err));
+                  // Unregister old service workers
+                  navigator.serviceWorker.getRegistrations().then((registrations) => {
+                    registrations.forEach((reg) => reg.unregister());
+                  }).then(() => {
+                    // Register new service worker
+                    navigator.serviceWorker.register('/sw.js')
+                      .then((reg) => console.log('SW registered:', reg))
+                      .catch((err) => console.log('SW registration failed:', err));
+                  });
                 });
               }
             `,

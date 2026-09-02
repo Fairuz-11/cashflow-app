@@ -1,19 +1,8 @@
 // Service Worker for Cashflow PWA
 const CACHE_NAME = 'cashflow-v1';
-const urlsToCache = [
-  '/',
-  '/dashboard',
-  '/income',
-  '/expense',
-  '/login',
-];
 
-// Install event - cache important resources
+// Install event
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-  );
   self.skipWaiting();
 });
 
@@ -33,17 +22,32 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
+  // Skip cross-origin requests and non-GET requests
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request, { redirect: 'follow' })
       .then((response) => {
-        // Cache hit - return response
-        if (response) {
+        // Don't cache redirects or errors
+        if (!response || response.status !== 200 || response.type === 'opaque') {
           return response;
         }
-        return fetch(event.request);
-      }
-    )
+
+        // Clone response to cache
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+
+        return response;
+      })
+      .catch(() => {
+        // Fallback to cache on network failure
+        return caches.match(event.request);
+      })
   );
 });
