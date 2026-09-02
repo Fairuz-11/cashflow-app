@@ -43,6 +43,8 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
   ]
 
   const handleNavClick = (path: string) => {
+    console.log('🔥 KLIK NAVBAR:', path)
+    console.log('📍 Current pathname:', pathname)
     router.push(path)
     router.refresh()
   }
