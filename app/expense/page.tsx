@@ -4,10 +4,13 @@ import { useEffect, useState } from "react"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Pagination } from "@/components/ui/pagination"
 import { TransactionFormModal } from "@/components/transactions/transaction-form-modal"
 import { TransactionTable } from "@/components/transactions/transaction-table"
 import { TransactionData } from "@/types/transaction"
 import { useRouter } from "next/navigation"
+
+const ITEMS_PER_PAGE = 5
 
 export default function ExpensePage() {
   const router = useRouter()
@@ -16,6 +19,7 @@ export default function ExpensePage() {
   const [transactions, setTransactions] = useState<TransactionData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [userName, setUserName] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     fetchTransactions()
@@ -42,6 +46,12 @@ export default function ExpensePage() {
 
   const totalExpense = transactions.reduce((s, t) => s + t.amount, 0)
   const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
+
+  // Pagination logic
+  const totalPages = Math.ceil(transactions.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedTransactions = transactions.slice(startIndex, endIndex)
 
   return (
     <DashboardLayout userName={userName}>
@@ -90,7 +100,20 @@ export default function ExpensePage() {
                 <p className="text-sm text-gray-500">Memuat data...</p>
               </div>
             ) : (
-              <TransactionTable transactions={transactions} onEdit={(t) => { setEditingTransaction(t); setIsModalOpen(true) }} />
+              <>
+                <TransactionTable 
+                  transactions={paginatedTransactions} 
+                  onEdit={(t) => { setEditingTransaction(t); setIsModalOpen(true) }}
+                  onDelete={fetchTransactions}
+                />
+                {totalPages > 1 && (
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                )}
+              </>
             )}
           </CardContent>
         </Card>

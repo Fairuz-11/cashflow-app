@@ -1,23 +1,34 @@
 "use client"
 
+import { useState } from "react"
 import { TransactionData } from "@/types/transaction"
+import { Pagination } from "@/components/ui/pagination"
 
 interface UpcomingTransactionsProps {
   transactions: TransactionData[]
 }
 
+const ITEMS_PER_PAGE = 5
+
 export function UpcomingTransactions({ transactions }: UpcomingTransactionsProps) {
+  const [currentPage, setCurrentPage] = useState(1)
   const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
+
+  // Pagination logic
+  const totalPages = Math.ceil(transactions.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedTransactions = transactions.slice(startIndex, endIndex)
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-gray-900">Upcoming bills</h3>
-        <button className="text-xs text-blue-600 hover:text-blue-700">View all</button>
+        <span className="text-xs text-gray-500">{transactions.length} transactions</span>
       </div>
 
       <div className="space-y-3">
-        {transactions.slice(0, 4).map((transaction) => (
+        {paginatedTransactions.map((transaction) => (
           <div key={transaction.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -40,6 +51,16 @@ export function UpcomingTransactions({ transactions }: UpcomingTransactionsProps
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
     </div>
   )
 }

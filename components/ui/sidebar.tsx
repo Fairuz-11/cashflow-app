@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname, useRouter } from "next/navigation"
+import { useState } from "react"
 
 interface SidebarProps {
   userName?: string | null
@@ -10,6 +11,7 @@ interface SidebarProps {
 export function Sidebar({ userName, onLogout }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [isNavigating, setIsNavigating] = useState(false)
 
   const menuItems = [
     {
@@ -43,10 +45,11 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
   ]
 
   const handleNavClick = (path: string) => {
-    console.log('🔥 KLIK NAVBAR:', path)
-    console.log('📍 Current pathname:', pathname)
+    // Kalau sudah di halaman yang sama, jangan navigate lagi
+    if (pathname === path) return
+    
+    setIsNavigating(true)
     router.push(path)
-    router.refresh()
   }
 
   return (
@@ -54,7 +57,16 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       {/* ── DESKTOP SIDEBAR (lg+) ─────────────────── */}
       <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200 min-h-screen flex-col flex-shrink-0">
         <div className="px-6 py-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-blue-600">Cashflow</h1>
+          <div className="flex items-center gap-2.5">
+            <img 
+              src="/logocash.png" 
+              alt="Cashflow Logo" 
+              className="w-8 h-8 object-contain"
+            />
+            <div>
+              <h1 className="text-2xl font-bold text-blue-600">Cashflow</h1>
+            </div>
+          </div>
           <p className="text-sm text-gray-500 mt-1">Simple & Modern</p>
         </div>
 
@@ -79,12 +91,16 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                 <li key={item.path}>
                   <button
                     onClick={() => handleNavClick(item.path)}
+                    disabled={isNavigating}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full text-left ${
                       isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
-                    }`}
+                    } ${isNavigating ? "opacity-50 cursor-wait" : ""}`}
                   >
                     {item.icon}
                     <span className="font-medium">{item.name}</span>
+                    {isNavigating && item.path !== pathname && (
+                      <span className="ml-auto text-xs">...</span>
+                    )}
                   </button>
                 </li>
               )
@@ -109,12 +125,11 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       {/* ── MOBILE / TABLET TOP BAR (< lg) ──────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 h-14 px-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
+          <img 
+            src="/logocash.png" 
+            alt="Cashflow Logo" 
+            className="w-7 h-7 object-contain"
+          />
           <span className="text-blue-600 font-bold text-lg tracking-tight">Cashflow</span>
         </div>
 
@@ -148,9 +163,10 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
               <button
                 key={item.path}
                 onClick={() => handleNavClick(item.path)}
+                disabled={isNavigating}
                 className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
                   isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
-                }`}
+                } ${isNavigating ? "opacity-50" : ""}`}
               >
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? "bg-blue-50" : ""}`}>
                   {item.icon}

@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation"
 interface TransactionTableProps {
   transactions: TransactionData[]
   onEdit: (transaction: TransactionData) => void
+  onDelete?: () => void
 }
 
-export function TransactionTable({ transactions, onEdit }: TransactionTableProps) {
+export function TransactionTable({ transactions, onEdit, onDelete }: TransactionTableProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
@@ -36,6 +37,7 @@ export function TransactionTable({ transactions, onEdit }: TransactionTableProps
       const result = await deleteTransaction(id)
       if (result.success) {
         router.refresh()
+        onDelete?.() // Trigger parent refresh
       } else {
         alert(result.error || "Gagal menghapus transaksi")
       }
