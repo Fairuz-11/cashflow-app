@@ -3,9 +3,11 @@
 import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/session"
 import { revalidatePath } from "next/cache"
+import { unstable_cache } from "next/cache"
 import { z } from "zod"
 import { TransactionData } from "@/types/transaction"
 import { transactionSchema } from "@/lib/validations/transaction"
+import { cache } from "react"
 
 // Helper: cast Prisma result ke TransactionData
 function toTransactionData(t: any): TransactionData {
@@ -16,8 +18,8 @@ function toTransactionData(t: any): TransactionData {
   }
 }
 
-// Get summary (total income, expense, profit)
-export async function getSummary() {
+// Get summary (total income, expense, profit) - cached per request
+export const getSummary = cache(async () => {
   const user = await requireAuth()
 
   const now = new Date()
@@ -72,10 +74,10 @@ export async function getSummary() {
   const expenseThisMonth = Number(expenseMonthResult._sum.amount || 0)
 
   return { totalIncome, totalExpense, profit, expenseThisWeek, expenseThisMonth }
-}
+})
 
-// Get recent transactions
-export async function getRecentTransactions(limit: number = 10): Promise<TransactionData[]> {
+// Get recent transactions - cached per request
+export const getRecentTransactions = cache(async (limit: number = 10): Promise<TransactionData[]> => {
   const user = await requireAuth()
 
   const transactions = await prisma.transaction.findMany({
@@ -85,7 +87,7 @@ export async function getRecentTransactions(limit: number = 10): Promise<Transac
   })
 
   return transactions.map(toTransactionData)
-}
+})
 
 // Get all transactions by type
 export async function getTransactionsByType(type: "income" | "expense"): Promise<TransactionData[]> {
@@ -197,8 +199,8 @@ export async function getTransaction(id: string): Promise<TransactionData | null
   return toTransactionData(transaction)
 }
 
-// Get weekly data for chart
-export async function getWeeklyData() {
+// Get weekly data for chart - cached per request
+export const getWeeklyData = cache(async () => {
   const user = await requireAuth()
 
   // Get last 5 weeks of data
@@ -245,4 +247,4 @@ export async function getWeeklyData() {
   }
 
   return weeks
-}
+})

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, memo } from "react"
 import { TransactionData } from "@/types/transaction"
 import { Button } from "@/components/ui/button"
 import { deleteTransaction } from "@/lib/actions/transaction"
@@ -12,7 +12,7 @@ interface TransactionTableProps {
   onDelete?: () => void
 }
 
-export function TransactionTable({ transactions, onEdit, onDelete }: TransactionTableProps) {
+function TransactionTableComponent({ transactions, onEdit, onDelete }: TransactionTableProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
@@ -161,3 +161,6 @@ export function TransactionTable({ transactions, onEdit, onDelete }: Transaction
     </>
   )
 }
+
+// Memoized untuk mencegah re-render yang tidak perlu
+export const TransactionTable = memo(TransactionTableComponent)

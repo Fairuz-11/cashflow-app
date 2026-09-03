@@ -9,6 +9,11 @@ export async function GET() {
       id: user.id,
       name: user.name,
       email: user.email,
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'CDN-Cache-Control': 'public, s-maxage=600',
+      },
     })
   } catch (error) {
     return NextResponse.json(

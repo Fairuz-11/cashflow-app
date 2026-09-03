@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['@/components'],
     // Disable web vitals in development to prevent errors
     webVitalsAttribution: [],
+    // Optimized caching strategy
+    inlineCss: true,
   },
 
   // Image optimization
@@ -26,6 +28,9 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+
+  // Caching optimization
+  cacheMaxMemorySize: 50 * 1024 * 1024, // 50MB
 };
 
 export default nextConfig;

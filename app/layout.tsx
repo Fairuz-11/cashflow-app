@@ -6,11 +6,13 @@ import { SessionProvider } from "@/components/providers/session-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // Instant font swap untuk loading lebih cepat
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -48,26 +50,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Force kill all service workers
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                  for(let registration of registrations) {
-                    registration.unregister().then(function(boolean) {
-                      console.log('Unregistered:', boolean);
-                      // Force reload after unregister
-                      if (boolean) {
-                        window.location.reload(true);
-                      }
-                    });
-                  }
-                });
-              }
-            `,
-          }}
-        />
       </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>

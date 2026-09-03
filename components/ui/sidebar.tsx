@@ -1,7 +1,7 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
-import { useState } from "react"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 interface SidebarProps {
   userName?: string | null
@@ -10,8 +10,6 @@ interface SidebarProps {
 
 export function Sidebar({ userName, onLogout }: SidebarProps) {
   const pathname = usePathname()
-  const router = useRouter()
-  const [isNavigating, setIsNavigating] = useState(false)
 
   const menuItems = [
     {
@@ -43,14 +41,6 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       ),
     },
   ]
-
-  const handleNavClick = (path: string) => {
-    // Kalau sudah di halaman yang sama, jangan navigate lagi
-    if (pathname === path) return
-    
-    setIsNavigating(true)
-    router.push(path)
-  }
 
   return (
     <>
@@ -87,21 +77,19 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
           <ul className="space-y-1">
             {menuItems.map((item) => {
               const isActive = pathname === item.path
+              
               return (
                 <li key={item.path}>
-                  <button
-                    onClick={() => handleNavClick(item.path)}
-                    disabled={isNavigating}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full text-left ${
+                  <Link
+                    href={item.path}
+                    prefetch={true}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full ${
                       isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
-                    } ${isNavigating ? "opacity-50 cursor-wait" : ""}`}
+                    }`}
                   >
                     {item.icon}
                     <span className="font-medium">{item.name}</span>
-                    {isNavigating && item.path !== pathname && (
-                      <span className="ml-auto text-xs">...</span>
-                    )}
-                  </button>
+                  </Link>
                 </li>
               )
             })}
@@ -159,20 +147,21 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
         <div className="flex">
           {menuItems.map((item) => {
             const isActive = pathname === item.path
+            
             return (
-              <button
+              <Link
                 key={item.path}
-                onClick={() => handleNavClick(item.path)}
-                disabled={isNavigating}
+                href={item.path}
+                prefetch={true}
                 className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
                   isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
-                } ${isNavigating ? "opacity-50" : ""}`}
+                }`}
               >
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? "bg-blue-50" : ""}`}>
                   {item.icon}
                 </div>
                 <span className="text-[10px] font-semibold">{item.name}</span>
-              </button>
+              </Link>
             )
           })}
         </div>

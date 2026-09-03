@@ -28,7 +28,13 @@ export async function GET(request: Request) {
       amount: Number(t.amount),
     }))
 
-    return NextResponse.json(formattedTransactions)
+    return NextResponse.json(formattedTransactions, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        'CDN-Cache-Control': 'public, s-maxage=60',
+        'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+      },
+    })
   } catch (error) {
     console.error("Error fetching transactions:", error)
     return NextResponse.json(
