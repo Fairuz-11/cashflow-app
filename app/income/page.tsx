@@ -36,13 +36,18 @@ export default function IncomePage() {
   const fetchTransactions = async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/transactions?type=income")
+      // Tambahkan timestamp untuk bypass cache
+      const res = await fetch(`/api/transactions?type=income&t=${Date.now()}`)
       if (res.ok) setTransactions(await res.json())
     } catch {}
     finally { setIsLoading(false) }
   }
 
-  const handleSuccess = () => { fetchTransactions(); router.refresh() }
+  const handleSuccess = () => { 
+    // Langsung fetch dengan timestamp baru untuk bypass cache
+    fetchTransactions()
+    router.refresh()
+  }
 
   const totalIncome = transactions.reduce((s, t) => s + t.amount, 0)
   const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
