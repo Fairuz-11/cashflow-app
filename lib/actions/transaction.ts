@@ -203,9 +203,9 @@ export async function getTransaction(id: string): Promise<TransactionData | null
 export const getWeeklyData = cache(async () => {
   const user = await requireAuth()
 
-  // Get last 5 weeks of data
+  // Get last 12 weeks of data (untuk support filter 3 months)
   const weeks = []
-  for (let i = 4; i >= 0; i--) {
+  for (let i = 11; i >= 0; i--) {
     const endDate = new Date()
     endDate.setDate(endDate.getDate() - (i * 7))
     endDate.setHours(23, 59, 59, 999)
