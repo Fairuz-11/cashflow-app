@@ -12,8 +12,17 @@ interface WeeklyBarChartProps {
 
 type TimeRange = '1week' | '1month' | '3months'
 
+interface TooltipData {
+  label: string
+  income: number
+  expense: number
+  x: number
+  y: number
+}
+
 export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('1month')
+  const [tooltip, setTooltip] = useState<TooltipData | null>(null)
 
   // Filter data berdasarkan time range
   const getFilteredData = () => {
@@ -38,8 +47,32 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
     { value: '3months', label: '3 Months' },
   ]
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
+
+  const handleBarHover = (data: typeof filteredData[0], event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    setTooltip({
+      label: data.label,
+      income: data.income,
+      expense: data.expense,
+      x: rect.left + rect.width / 2,
+      y: rect.top - 10,
+    })
+  }
+
+  const handleBarLeave = () => {
+    setTooltip(null)
+  }
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5">
+    <div className="bg-white rounded-2xl border border-gray-200 p-5 relative">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-gray-900">Income vs. Spending</h3>
         
@@ -68,19 +101,22 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
           const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
 
           return (
-            <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+            <div 
+              key={idx} 
+              className="flex-1 flex flex-col items-center gap-2"
+              onMouseEnter={(e) => handleBarHover(data, e)}
+              onMouseLeave={handleBarLeave}
+            >
               <div className="w-full flex gap-1.5 items-end" style={{ height: '140px' }}>
                 {/* Income bar */}
                 <div 
-                  className="flex-1 bg-emerald-400 rounded-t-lg transition-all duration-500"
+                  className="flex-1 bg-emerald-400 rounded-t-lg transition-all duration-300 hover:bg-emerald-500 cursor-pointer"
                   style={{ height: `${incomeHeight}%` }}
-                  title={`Income: Rp${data.income.toLocaleString('id-ID')}`}
                 />
                 {/* Expense bar */}
                 <div 
-                  className="flex-1 bg-slate-800 rounded-t-lg transition-all duration-500"
+                  className="flex-1 bg-slate-800 rounded-t-lg transition-all duration-300 hover:bg-slate-700 cursor-pointer"
                   style={{ height: `${expenseHeight}%` }}
-                  title={`Expense: Rp${data.expense.toLocaleString('id-ID')}`}
                 />
               </div>
               <span className="text-xs text-gray-500">{data.label}</span>
@@ -88,6 +124,35 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
           )
         })}
       </div>
+
+      {/* Tooltip */}
+      {tooltip && (
+        <div 
+          className="fixed z-50 bg-gray-900 text-white px-3 py-2 rounded-lg shadow-lg text-xs pointer-events-none transform -translate-x-1/2 -translate-y-full"
+          style={{ 
+            left: `${tooltip.x}px`, 
+            top: `${tooltip.y}px`,
+          }}
+        >
+          <div className="font-semibold mb-1 text-center">{tooltip.label}</div>
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-emerald-400 rounded-sm"></div>
+              <span className="text-gray-300">Income:</span>
+              <span className="font-semibold text-emerald-400">{formatCurrency(tooltip.income)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-slate-400 rounded-sm"></div>
+              <span className="text-gray-300">Expense:</span>
+              <span className="font-semibold text-red-400">{formatCurrency(tooltip.expense)}</span>
+            </div>
+          </div>
+          {/* Arrow */}
+          <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-full">
+            <div className="border-4 border-transparent border-t-gray-900"></div>
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 mt-4 text-xs">
