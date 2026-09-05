@@ -10,7 +10,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
-      "prisma:seed": "node prisma/seed.js",
+    "prisma:seed": "node prisma/seed.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "bcryptjs": "^3.0.3",
     "next": "16.3.3",
     "next-auth": "^4.24.15",
+    "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
     "react": "19.2.8",
     "react-dom": "19.2.8",

@@ -30,7 +30,7 @@ async function ChartsSection() {
 
 // Komponen untuk recent transactions - akan di-stream
 async function RecentTransactionsSection() {
-  const recentTransactions = await getRecentTransactions(5)
+  const recentTransactions = await getRecentTransactions(10) // Ambil 10 transaksi
   return <UpcomingTransactions transactions={recentTransactions} />
 }
 
