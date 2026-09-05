@@ -72,7 +72,7 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 relative">
+    <div className="bg-white rounded-2xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-gray-900">Income vs. Spending</h3>
         
@@ -94,36 +94,67 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
         </div>
       </div>
 
-      {/* Chart */}
-      <div className="h-48 flex items-end justify-between gap-4">
-        {filteredData.map((data, idx) => {
-          const incomeHeight = maxValue > 0 ? (data.income / maxValue) * 100 : 0
-          const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
+      {/* Chart Container dengan horizontal scroll */}
+      <div className="overflow-x-auto pb-2">
+        <div 
+          className="h-48 flex items-end justify-between gap-3 sm:gap-4 px-2"
+          style={{ 
+            minWidth: filteredData.length > 4 ? `${filteredData.length * 60}px` : '100%' 
+          }}
+        >
+          {filteredData.map((data, idx) => {
+            const incomeHeight = maxValue > 0 ? (data.income / maxValue) * 100 : 0
+            const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
 
-          return (
-            <div 
-              key={idx} 
-              className="flex-1 flex flex-col items-center gap-2"
-              onMouseEnter={(e) => handleBarHover(data, e)}
-              onMouseLeave={handleBarLeave}
-            >
-              <div className="w-full flex gap-1.5 items-end" style={{ height: '140px' }}>
-                {/* Income bar */}
-                <div 
-                  className="flex-1 bg-emerald-400 rounded-t-lg transition-all duration-300 hover:bg-emerald-500 cursor-pointer"
-                  style={{ height: `${incomeHeight}%` }}
-                />
-                {/* Expense bar */}
-                <div 
-                  className="flex-1 bg-slate-800 rounded-t-lg transition-all duration-300 hover:bg-slate-700 cursor-pointer"
-                  style={{ height: `${expenseHeight}%` }}
-                />
+            return (
+              <div 
+                key={idx} 
+                className="flex flex-col items-center gap-2"
+                style={{ 
+                  width: filteredData.length > 4 ? '50px' : 'auto',
+                  flex: filteredData.length <= 4 ? '1' : 'none'
+                }}
+                onMouseEnter={(e) => handleBarHover(data, e)}
+                onMouseLeave={handleBarLeave}
+              >
+                {/* Bar container dengan max height */}
+                <div className="w-full flex gap-1 sm:gap-1.5 items-end" style={{ height: '140px' }}>
+                  {/* Income bar */}
+                  <div 
+                    className="flex-1 bg-emerald-400 rounded-t-lg transition-all duration-300 hover:bg-emerald-500 cursor-pointer"
+                    style={{ 
+                      height: `${Math.min(incomeHeight, 100)}%`,
+                      minHeight: incomeHeight > 0 ? '4px' : '0'
+                    }}
+                  />
+                  {/* Expense bar */}
+                  <div 
+                    className="flex-1 bg-slate-800 rounded-t-lg transition-all duration-300 hover:bg-slate-700 cursor-pointer"
+                    style={{ 
+                      height: `${Math.min(expenseHeight, 100)}%`,
+                      minHeight: expenseHeight > 0 ? '4px' : '0'
+                    }}
+                  />
+                </div>
+                {/* Label dengan truncate untuk text panjang */}
+                <span className="text-[10px] sm:text-xs text-gray-500 truncate w-full text-center">
+                  {data.label}
+                </span>
               </div>
-              <span className="text-xs text-gray-500">{data.label}</span>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
+
+      {/* Scroll Hint - muncul kalau data banyak */}
+      {filteredData.length > 4 && (
+        <div className="flex items-center justify-center gap-1 text-xs text-gray-400 mt-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <span>Scroll untuk lihat semua</span>
+        </div>
+      )}
 
       {/* Tooltip */}
       {tooltip && (
@@ -134,15 +165,15 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
             top: `${tooltip.y}px`,
           }}
         >
-          <div className="font-semibold mb-1 text-center">{tooltip.label}</div>
+          <div className="font-semibold mb-1 text-center whitespace-nowrap">{tooltip.label}</div>
           <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-400 rounded-sm"></div>
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <div className="w-2 h-2 bg-emerald-400 rounded-sm flex-shrink-0"></div>
               <span className="text-gray-300">Income:</span>
               <span className="font-semibold text-emerald-400">{formatCurrency(tooltip.income)}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-slate-400 rounded-sm"></div>
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <div className="w-2 h-2 bg-slate-400 rounded-sm flex-shrink-0"></div>
               <span className="text-gray-300">Expense:</span>
               <span className="font-semibold text-red-400">{formatCurrency(tooltip.expense)}</span>
             </div>
