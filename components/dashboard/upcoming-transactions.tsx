@@ -7,7 +7,7 @@ interface UpcomingTransactionsProps {
   transactions: TransactionData[]
 }
 
-const ITEMS_PER_PAGE = 3
+const ITEMS_PER_PAGE = 5
 
 export function UpcomingTransactions({ transactions }: UpcomingTransactionsProps) {
   const [currentPage, setCurrentPage] = useState(1)
