@@ -109,42 +109,35 @@ export default function IncomePage() {
       <div className="space-y-6">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </span>
-              Uang Masuk
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">Kelola dan pantau semua pemasukan Anda</p>
+            <h1 className="text-2xl font-semibold text-gray-900">Pemasukan</h1>
+            <p className="text-gray-600 text-sm mt-1">Kelola transaksi pemasukan Anda</p>
           </div>
           <Button 
             onClick={() => { setEditingTransaction(null); setIsModalOpen(true) }} 
-            className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg shadow-emerald-200 flex items-center gap-2"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span>Tambah Pemasukan</span>
+            <span>Tambah Data</span>
           </Button>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Total Income */}
-          <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50 to-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1">Total Pemasukan</p>
-                  <p className="text-2xl font-bold text-emerald-700">{fmt(totalIncome)}</p>
-                  <p className="text-xs text-gray-500 mt-1">{filteredTransactions.length} transaksi</p>
+          <Card className="border border-gray-200">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1.5">Total Pemasukan</p>
+                  <p className="text-2xl font-semibold text-emerald-600">{fmt(totalIncome)}</p>
+                  <p className="text-xs text-gray-400 mt-1">{filteredTransactions.length} transaksi</p>
                 </div>
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -153,13 +146,13 @@ export default function IncomePage() {
           </Card>
 
           {/* This Month */}
-          <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Bulan Ini</p>
-                  <p className="text-2xl font-bold text-blue-700">{fmt(thisMonthIncome)}</p>
-                  <p className="text-xs text-gray-500 mt-1">
+          <Card className="border border-gray-200">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1.5">Bulan Ini</p>
+                  <p className="text-2xl font-semibold text-blue-600">{fmt(thisMonthIncome)}</p>
+                  <p className="text-xs text-gray-400 mt-1">
                     {transactions.filter(t => {
                       const now = new Date()
                       const start = new Date(now.getFullYear(), now.getMonth(), 1)
@@ -167,8 +160,8 @@ export default function IncomePage() {
                     }).length} transaksi
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -177,19 +170,19 @@ export default function IncomePage() {
           </Card>
 
           {/* Average Transaction */}
-          <Card className="border-purple-100 bg-gradient-to-br from-purple-50 to-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Rata-rata</p>
-                  <p className="text-2xl font-bold text-purple-700">
+          <Card className="border border-gray-200">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1.5">Rata-rata</p>
+                  <p className="text-2xl font-semibold text-slate-700">
                     {fmt(transactions.length > 0 ? transactions.reduce((s, t) => s + t.amount, 0) / transactions.length : 0)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">per transaksi</p>
+                  <p className="text-xs text-gray-400 mt-1">per transaksi</p>
                 </div>
-                <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
@@ -198,12 +191,12 @@ export default function IncomePage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <Card className="shadow-md">
+        <Card className="border border-gray-200">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               {/* Search Input */}
               <div className="flex-1 relative">
-                <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -211,7 +204,7 @@ export default function IncomePage() {
                   placeholder="Cari transaksi..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full pl-9 pr-9 py-2 text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900"
                 />
                 {searchQuery && (
                   <button
@@ -235,10 +228,10 @@ export default function IncomePage() {
                   <button
                     key={filter.value}
                     onClick={() => setTimeFilter(filter.value)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
                       timeFilter === filter.value
-                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
                     }`}
                   >
                     {filter.label}
@@ -250,7 +243,7 @@ export default function IncomePage() {
         </Card>
 
         {/* Transactions Table */}
-        <Card className="shadow-md">
+        <Card className="border border-gray-200">
           <CardHeader className="px-6 py-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Daftar Transaksi</CardTitle>
