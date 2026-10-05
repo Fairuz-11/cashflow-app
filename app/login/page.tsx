@@ -250,11 +250,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="my-6 flex items-center gap-3">
-              <div className="flex-1 h-px bg-gray-100" />
-            </div>
-
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-gray-400 mt-6">
               Aman & terlindungi. Data Anda tidak pernah dibagikan.
             </p>
           </div>
