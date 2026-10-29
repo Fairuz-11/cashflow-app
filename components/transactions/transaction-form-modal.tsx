@@ -75,7 +75,7 @@ export function TransactionFormModal({
       } else {
         setError(result.error || "Terjadi kesalahan")
       }
-    } catch (error) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.")
     } finally {
       setIsLoading(false)
