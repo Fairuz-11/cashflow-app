@@ -10,7 +10,7 @@ interface WeeklyBarChartProps {
   }>
 }
 
-type TimeRange = '1week' | '1month' | '3months'
+type TimeRange = "1week" | "1month" | "3months"
 
 interface TooltipData {
   label: string
@@ -21,42 +21,39 @@ interface TooltipData {
 }
 
 export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
-  const [timeRange, setTimeRange] = useState<TimeRange>('1month')
+  const [timeRange, setTimeRange] = useState<TimeRange>("1month")
   const [tooltip, setTooltip] = useState<TooltipData | null>(null)
 
-  // Filter data berdasarkan time range
   const getFilteredData = () => {
     switch (timeRange) {
-      case '1week':
-        return weeklyData.slice(-1) // 1 minggu terakhir
-      case '1month':
-        return weeklyData.slice(-4) // 4 minggu terakhir
-      case '3months':
-        return weeklyData.slice(-12) // 12 minggu terakhir
+      case "1week":
+        return weeklyData.slice(-1)
+      case "1month":
+        return weeklyData.slice(-4)
+      case "3months":
+        return weeklyData.slice(-12)
       default:
         return weeklyData.slice(-4)
     }
   }
 
   const filteredData = getFilteredData()
-  const maxValue = Math.max(...filteredData.map(d => Math.max(d.income, d.expense)))
-
+  const maxValue = Math.max(0, ...filteredData.map((d) => Math.max(d.income, d.expense)))
   const filterButtons: Array<{ value: TimeRange; label: string }> = [
-    { value: '1week', label: '1 Week' },
-    { value: '1month', label: '1 Month' },
-    { value: '3months', label: '3 Months' },
+    { value: "1week", label: "1 Week" },
+    { value: "1month", label: "1 Month" },
+    { value: "3months", label: "3 Months" },
   ]
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount)
-  }
 
-  const handleBarHover = (data: typeof filteredData[0], event: React.MouseEvent) => {
+  const handleBarHover = (data: (typeof filteredData)[number], event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     setTooltip({
       label: data.label,
@@ -67,26 +64,26 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
     })
   }
 
-  const handleBarLeave = () => {
-    setTooltip(null)
-  }
-
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold text-gray-900">Income vs. Spending</h3>
-        
-        {/* Filter Buttons */}
-        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+    <section className="min-w-0 rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/40 sm:p-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Trend</p>
+          <h3 className="mt-1 text-lg font-bold tracking-tight text-slate-900">Income vs. spending</h3>
+          <p className="mt-1 text-sm text-slate-500">Compare your weekly money flow</p>
+        </div>
+        <div className="flex w-fit max-w-full items-center gap-1 rounded-xl bg-slate-100 p-1">
           {filterButtons.map((btn) => (
             <button
               key={btn.value}
+              type="button"
               onClick={() => setTimeRange(btn.value)}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+              aria-pressed={timeRange === btn.value}
+              className={"rounded-lg px-2.5 py-2 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs " + (
                 timeRange === btn.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900"
+              )}
             >
               {btn.label}
             </button>
@@ -94,108 +91,63 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
         </div>
       </div>
 
-      {/* Chart Container dengan horizontal scroll */}
       <div className="overflow-x-auto pb-2">
-        <div 
-          className="h-48 flex items-end justify-between gap-3 sm:gap-4 px-2"
-          style={{ 
-            minWidth: filteredData.length > 4 ? `${filteredData.length * 60}px` : '100%' 
-          }}
-        >
-          {filteredData.map((data, idx) => {
-            const incomeHeight = maxValue > 0 ? (data.income / maxValue) * 100 : 0
-            const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
-
-            return (
-              <div 
-                key={idx} 
-                className="flex flex-col items-center gap-2"
-                style={{ 
-                  width: filteredData.length > 4 ? '50px' : 'auto',
-                  flex: filteredData.length <= 4 ? '1' : 'none'
-                }}
-                onMouseEnter={(e) => handleBarHover(data, e)}
-                onMouseLeave={handleBarLeave}
-              >
-                {/* Bar container dengan max height */}
-                <div className="w-full flex gap-1 sm:gap-1.5 items-end" style={{ height: '140px' }}>
-                  {/* Income bar */}
-                  <div 
-                    className="flex-1 bg-emerald-400 rounded-t-lg transition-all duration-300 hover:bg-emerald-500 cursor-pointer"
-                    style={{ 
-                      height: `${Math.min(incomeHeight, 100)}%`,
-                      minHeight: incomeHeight > 0 ? '4px' : '0'
-                    }}
-                  />
-                  {/* Expense bar */}
-                  <div 
-                    className="flex-1 bg-slate-800 rounded-t-lg transition-all duration-300 hover:bg-slate-700 cursor-pointer"
-                    style={{ 
-                      height: `${Math.min(expenseHeight, 100)}%`,
-                      minHeight: expenseHeight > 0 ? '4px' : '0'
-                    }}
-                  />
+        {filteredData.length > 0 ? (
+          <div
+            className="flex h-48 min-w-full items-end justify-between gap-3 px-1 sm:gap-4"
+            style={{ minWidth: filteredData.length > 4 ? `${filteredData.length * 56}px` : "100%" }}
+          >
+            {filteredData.map((data, idx) => {
+              const incomeHeight = maxValue > 0 ? (data.income / maxValue) * 100 : 0
+              const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
+              return (
+                <div
+                  key={data.label + "-" + idx}
+                  className="flex min-w-0 flex-1 flex-col items-center gap-3"
+                  onMouseEnter={(event) => handleBarHover(data, event)}
+                  onMouseLeave={() => setTooltip(null)}
+                >
+                  <div className="flex h-36 w-full items-end justify-center gap-1.5 sm:gap-2">
+                    <div
+                      className="w-full max-w-7 rounded-t-lg bg-emerald-500 transition-all duration-300 hover:bg-emerald-600"
+                      style={{ height: incomeHeight + "%", minHeight: data.income > 0 ? "4px" : "0" }}
+                      aria-label={"Income " + formatCurrency(data.income)}
+                    />
+                    <div
+                      className="w-full max-w-7 rounded-t-lg bg-slate-300 transition-all duration-300 hover:bg-slate-400"
+                      style={{ height: expenseHeight + "%", minHeight: data.expense > 0 ? "4px" : "0" }}
+                      aria-label={"Spending " + formatCurrency(data.expense)}
+                    />
+                  </div>
+                  <span className="w-full truncate text-center text-[10px] font-medium text-slate-400 sm:text-xs">{data.label}</span>
                 </div>
-                {/* Label dengan truncate untuk text panjang */}
-                <span className="text-[10px] sm:text-xs text-gray-500 truncate w-full text-center">
-                  {data.label}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="flex h-48 items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-400">
+            No cashflow data for this period
+          </div>
+        )}
       </div>
 
-      {/* Scroll Hint - muncul kalau data banyak */}
-      {filteredData.length > 4 && (
-        <div className="flex items-center justify-center gap-1 text-xs text-gray-400 mt-2">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-          <span>Scroll untuk lihat semua</span>
+      {filteredData.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-slate-100 pt-4 text-xs font-medium text-slate-500">
+          <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />Income</span>
+          <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm bg-slate-300" />Spending</span>
         </div>
       )}
 
-      {/* Tooltip */}
       {tooltip && (
-        <div 
-          className="fixed z-50 bg-gray-900 text-white px-3 py-2 rounded-lg shadow-lg text-xs pointer-events-none transform -translate-x-1/2 -translate-y-full"
-          style={{ 
-            left: `${tooltip.x}px`, 
-            top: `${tooltip.y}px`,
-          }}
+        <div
+          className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-xs text-white shadow-xl"
+          style={{ left: tooltip.x + "px", top: tooltip.y + "px" }}
         >
-          <div className="font-semibold mb-1 text-center whitespace-nowrap">{tooltip.label}</div>
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div className="w-2 h-2 bg-emerald-400 rounded-sm flex-shrink-0"></div>
-              <span className="text-gray-300">Income:</span>
-              <span className="font-semibold text-emerald-400">{formatCurrency(tooltip.income)}</span>
-            </div>
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <div className="w-2 h-2 bg-slate-400 rounded-sm flex-shrink-0"></div>
-              <span className="text-gray-300">Expense:</span>
-              <span className="font-semibold text-red-400">{formatCurrency(tooltip.expense)}</span>
-            </div>
-          </div>
-          {/* Arrow */}
-          <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-full">
-            <div className="border-4 border-transparent border-t-gray-900"></div>
-          </div>
+          <p className="mb-2 whitespace-nowrap text-center font-semibold">{tooltip.label}</p>
+          <p className="whitespace-nowrap text-emerald-300">Income: {formatCurrency(tooltip.income)}</p>
+          <p className="mt-1 whitespace-nowrap text-slate-300">Spending: {formatCurrency(tooltip.expense)}</p>
         </div>
       )}
-
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-emerald-400 rounded-sm" />
-          <span className="text-gray-600">Income</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-slate-800 rounded-sm" />
-          <span className="text-gray-600">Spending</span>
-        </div>
-      </div>
-    </div>
+    </section>
   )
 }
