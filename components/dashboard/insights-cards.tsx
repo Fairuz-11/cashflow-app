@@ -7,7 +7,7 @@ interface InsightsCardsProps {
   expenseThisMonth: number
 }
 
-export function InsightsCards({ totalIncome, totalExpense, expenseThisWeek, expenseThisMonth }: InsightsCardsProps) {
+export function InsightsCards({ totalIncome, totalExpense, expenseThisWeek }: InsightsCardsProps) {
   const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
   
   const avgDailyExpense = expenseThisWeek / 7
