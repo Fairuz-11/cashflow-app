@@ -181,7 +181,7 @@ export async function deleteTransaction(id: string) {
     revalidatePath("/expense")
 
     return { success: true }
-  } catch (error) {
+  } catch {
     return { success: false, error: "Gagal menghapus transaksi" }
   }
 }
