@@ -3,7 +3,6 @@
 import { useState, FormEvent } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { LoadingButton } from "@/components/ui/loading"
 
 /* ─── Floating-label input with icon ─────────────────────────── */
