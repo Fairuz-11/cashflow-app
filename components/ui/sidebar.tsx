@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 
 interface SidebarProps {
   userName?: string | null
@@ -48,10 +49,12 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200 min-h-screen flex-col flex-shrink-0">
         <div className="px-6 py-6 border-b border-gray-200">
           <div className="flex items-center gap-2.5">
-            <img 
-              src="/logocash.png" 
-              alt="Cashflow Logo" 
-              className="w-8 h-8 object-contain"
+            <Image
+              src="/logocash.png"
+              alt="Cashflow Logo"
+              width={32}
+              height={32}
+              className="object-contain"
             />
             <div>
               <h1 className="text-2xl font-bold text-blue-600">Cashflow</h1>
@@ -114,10 +117,12 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       {/* ── MOBILE / TABLET TOP BAR (< lg) ──────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 h-14 px-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <img 
-            src="/logocash.png" 
-            alt="Cashflow Logo" 
-            className="w-7 h-7 object-contain"
+          <Image
+            src="/logocash.png"
+            alt="Cashflow Logo"
+            width={28}
+            height={28}
+            className="object-contain"
           />
           <span className="text-blue-600 font-bold text-lg tracking-tight">Cashflow</span>
         </div>
