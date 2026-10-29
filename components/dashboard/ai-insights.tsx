@@ -6,7 +6,7 @@ interface AIInsightsProps {
   expenseMonth: number
 }
 
-export function AIInsights({ profit, expenseWeek, expenseMonth }: AIInsightsProps) {
+export function AIInsights({ expenseMonth }: AIInsightsProps) {
   const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
   const savingsPotential = expenseMonth * 0.2 // 20% savings potential
 

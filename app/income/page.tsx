@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -25,26 +25,26 @@ export default function IncomePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all')
 
-  useEffect(() => {
-    fetchTransactions()
-    fetchUserInfo()
-  }, [])
-
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetch("/api/user")
       if (res.ok) setUserName((await res.json()).name)
     } catch {}
-  }
+  }, [])
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     setIsLoading(true)
     try {
       const res = await fetch(`/api/transactions?type=income&t=${Date.now()}`)
       if (res.ok) setTransactions(await res.json())
     } catch {}
     finally { setIsLoading(false) }
-  }
+  }, [])
+
+  useEffect(() => {
+    void fetchTransactions()
+    void fetchUserInfo()
+  }, [fetchTransactions, fetchUserInfo])
 
   const handleSuccess = () => { 
     fetchTransactions()
@@ -98,11 +98,6 @@ export default function IncomePage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex)
-
-  // Reset page saat filter berubah
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [searchQuery, timeFilter])
 
   return (
     <DashboardLayout userName={userName}>
@@ -203,12 +198,12 @@ export default function IncomePage() {
                   type="text"
                   placeholder="Cari transaksi..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1) }}
                   className="w-full pl-9 pr-9 py-2 text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900"
                 />
                 {searchQuery && (
                   <button
-                    onClick={() => setSearchQuery("")}
+                    onClick={() => { setSearchQuery(""); setCurrentPage(1) }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,7 +222,7 @@ export default function IncomePage() {
                 ].map((filter) => (
                   <button
                     key={filter.value}
-                    onClick={() => setTimeFilter(filter.value)}
+                    onClick={() => { setTimeFilter(filter.value); setCurrentPage(1) }}
                     className={`min-h-10 px-2 py-2 text-xs font-medium rounded-lg transition-colors sm:px-3 ${
                       timeFilter === filter.value
                         ? 'bg-gray-900 text-white'
@@ -299,6 +294,7 @@ export default function IncomePage() {
       </div>
 
       <TransactionFormModal
+        key={`${isModalOpen ? "open" : "closed"}-${editingTransaction?.id ?? "new"}`}
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditingTransaction(null) }}
         type="income"

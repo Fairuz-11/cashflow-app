@@ -15,7 +15,7 @@ export async function GET() {
         'CDN-Cache-Control': 'public, s-maxage=600',
       },
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401 }

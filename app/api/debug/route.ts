@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
@@ -20,7 +21,7 @@ export async function GET() {
       status: "error",
       database: "failed",
       message: error instanceof Error ? error.message : String(error),
-      code: error instanceof Error && "code" in error ? (error as any).code : undefined,
+      code: error instanceof Error && "code" in error ? error instanceof Prisma.PrismaClientKnownRequestError ? error.code : undefined : undefined,
     }, { status: 500 })
   }
 }

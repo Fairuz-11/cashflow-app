@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, FormEvent, useEffect } from "react"
+import { useState, FormEvent } from "react"
 import { Modal } from "@/components/ui/modal"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -23,28 +23,13 @@ export function TransactionFormModal({
   transaction,
   onSuccess,
 }: TransactionFormModalProps) {
-  const [description, setDescription] = useState("")
-  const [amount, setAmount] = useState("")
-  const [transactionDate, setTransactionDate] = useState("")
+  const [description, setDescription] = useState(transaction?.description ?? "")
+  const [amount, setAmount] = useState(transaction ? transaction.amount.toString() : "")
+  const [transactionDate, setTransactionDate] = useState(transaction ? new Date(transaction.transactionDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0])
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const isEdit = !!transaction
-
-  useEffect(() => {
-    if (transaction) {
-      setDescription(transaction.description)
-      setAmount(transaction.amount.toString())
-      setTransactionDate(
-        new Date(transaction.transactionDate).toISOString().split("T")[0]
-      )
-    } else {
-      setDescription("")
-      setAmount("")
-      setTransactionDate(new Date().toISOString().split("T")[0])
-    }
-    setError("")
-  }, [transaction, isOpen])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -90,7 +75,7 @@ export function TransactionFormModal({
       } else {
         setError(result.error || "Terjadi kesalahan")
       }
-    } catch (error) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.")
     } finally {
       setIsLoading(false)
