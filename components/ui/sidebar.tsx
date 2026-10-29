@@ -83,7 +83,8 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                   <Link
                     href={item.path}
                     prefetch={true}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full ${
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
                       isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
                     }`}
                   >
@@ -143,8 +144,8 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
       </header>
 
       {/* ── MOBILE / TABLET BOTTOM NAV (< lg) ────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200">
-        <div className="flex">
+      <nav aria-label="Navigasi utama mobile" className="safe-area-bottom lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+        <div className="mx-auto flex max-w-xl">
           {menuItems.map((item) => {
             const isActive = pathname === item.path
             
@@ -153,14 +154,15 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                 key={item.path}
                 href={item.path}
                 prefetch={true}
-                className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
+                aria-current={isActive ? "page" : undefined}
+                className={`min-h-14 flex-1 flex flex-col items-center justify-center gap-0.5 px-1 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 ${
                   isActive ? "text-blue-600" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? "bg-blue-50" : ""}`}>
                   {item.icon}
                 </div>
-                <span className="text-[10px] font-semibold">{item.name}</span>
+                <span className="text-[10px] font-semibold leading-tight">{item.name}</span>
               </Link>
             )
           })}

@@ -116,7 +116,7 @@ export default function IncomePage() {
           </div>
           <Button 
             onClick={() => { setEditingTransaction(null); setIsModalOpen(true) }} 
-            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 flex items-center gap-2"
+            className="min-h-11 w-full justify-center bg-gray-900 px-4 py-2 text-white hover:bg-gray-800 sm:w-auto"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -126,14 +126,14 @@ export default function IncomePage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 sm:gap-4">
           {/* Total Income */}
           <Card className="border border-gray-200">
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1.5">Total Pemasukan</p>
-                  <p className="text-2xl font-semibold text-emerald-600">{fmt(totalIncome)}</p>
+                  <p className="break-long-content text-xl font-semibold text-emerald-600 sm:text-2xl">{fmt(totalIncome)}</p>
                   <p className="text-xs text-gray-400 mt-1">{filteredTransactions.length} transaksi</p>
                 </div>
                 <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
@@ -147,11 +147,11 @@ export default function IncomePage() {
 
           {/* This Month */}
           <Card className="border border-gray-200">
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1.5">Bulan Ini</p>
-                  <p className="text-2xl font-semibold text-blue-600">{fmt(thisMonthIncome)}</p>
+                  <p className="break-long-content text-xl font-semibold text-blue-600 sm:text-2xl">{fmt(thisMonthIncome)}</p>
                   <p className="text-xs text-gray-400 mt-1">
                     {transactions.filter(t => {
                       const now = new Date()
@@ -171,11 +171,11 @@ export default function IncomePage() {
 
           {/* Average Transaction */}
           <Card className="border border-gray-200">
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1.5">Rata-rata</p>
-                  <p className="text-2xl font-semibold text-slate-700">
+                  <p className="break-long-content text-xl font-semibold text-slate-700 sm:text-2xl">
                     {fmt(transactions.length > 0 ? transactions.reduce((s, t) => s + t.amount, 0) / transactions.length : 0)}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">per transaksi</p>
@@ -219,7 +219,7 @@ export default function IncomePage() {
               </div>
 
               {/* Time Filter Chips */}
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center">
                 {[
                   { value: 'all' as TimeFilter, label: 'Semua' },
                   { value: 'week' as TimeFilter, label: '7 Hari' },
@@ -228,7 +228,7 @@ export default function IncomePage() {
                   <button
                     key={filter.value}
                     onClick={() => setTimeFilter(filter.value)}
-                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                    className={`min-h-10 px-2 py-2 text-xs font-medium rounded-lg transition-colors sm:px-3 ${
                       timeFilter === filter.value
                         ? 'bg-gray-900 text-white'
                         : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
@@ -244,7 +244,7 @@ export default function IncomePage() {
 
         {/* Transactions Table */}
         <Card className="border border-gray-200">
-          <CardHeader className="px-6 py-4 border-b border-gray-100">
+          <CardHeader className="border-b border-gray-100 px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Daftar Transaksi</CardTitle>
               {filteredTransactions.length > 0 && (
@@ -254,7 +254,7 @@ export default function IncomePage() {
               )}
             </div>
           </CardHeader>
-          <CardContent className="px-6 pb-6">
+          <CardContent className="px-4 pb-5 sm:px-6 sm:pb-6">
             {isLoading ? (
               <div className="text-center py-16">
                 <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
