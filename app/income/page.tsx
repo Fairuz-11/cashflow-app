@@ -294,6 +294,7 @@ export default function IncomePage() {
       </div>
 
       <TransactionFormModal
+        key={`${isModalOpen ? "open" : "closed"}-${editingTransaction?.id ?? "new"}`}
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditingTransaction(null) }}
         type="income"
