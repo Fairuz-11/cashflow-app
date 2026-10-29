@@ -93,7 +93,10 @@ export function WeeklyBarChart({ weeklyData }: WeeklyBarChartProps) {
 
       <div className="overflow-x-auto pb-2">
         {filteredData.length > 0 ? (
-          <div className="flex h-48 min-w-full items-end justify-between gap-3 px-1 sm:gap-4">
+          <div
+            className="flex h-48 min-w-full items-end justify-between gap-3 px-1 sm:gap-4"
+            style={{ minWidth: filteredData.length > 4 ? `${filteredData.length * 56}px` : "100%" }}
+          >
             {filteredData.map((data, idx) => {
               const incomeHeight = maxValue > 0 ? (data.income / maxValue) * 100 : 0
               const expenseHeight = maxValue > 0 ? (data.expense / maxValue) * 100 : 0
