@@ -1,16 +1,16 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
+import type { Transaction } from "@prisma/client"
 import { requireAuth } from "@/lib/session"
 import { revalidatePath } from "next/cache"
-import { unstable_cache } from "next/cache"
 import { z } from "zod"
 import { TransactionData } from "@/types/transaction"
 import { transactionSchema } from "@/lib/validations/transaction"
 import { cache } from "react"
 
 // Helper: cast Prisma result ke TransactionData
-function toTransactionData(t: any): TransactionData {
+function toTransactionData(t: Transaction): TransactionData {
   return {
     ...t,
     type: t.type as "income" | "expense",

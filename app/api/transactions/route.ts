@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { requireAuth } from "@/lib/session"
 import { prisma } from "@/lib/prisma"
 
@@ -6,14 +7,12 @@ export async function GET(request: Request) {
   try {
     const user = await requireAuth()
     const { searchParams } = new URL(request.url)
-    const type = searchParams.get("type") as "income" | "expense" | null
+    const requestedType = searchParams.get("type")
+    const type = requestedType === "income" || requestedType === "expense" ? requestedType : null
 
-    const where: any = {
+    const where: Prisma.TransactionWhereInput = {
       userId: user.id,
-    }
-
-    if (type) {
-      where.type = type
+      ...(type ? { type } : {}),
     }
 
     const transactions = await prisma.transaction.findMany({
