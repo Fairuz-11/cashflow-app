@@ -24,6 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
+  min-width: 320px;
+  overflow-x: clip;
+}
+
+/* Keep fixed mobile navigation clear of device home indicators. */
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Prevent long labels and currency values from forcing horizontal overflow. */
+.break-long-content {
+  overflow-wrap: anywhere;
 }
 
 /* Performance optimizations */
@@ -52,6 +64,21 @@ img, video {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Custom scrollbar */

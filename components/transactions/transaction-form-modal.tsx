@@ -108,10 +108,10 @@ export function TransactionFormModal({
       title={title}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose} disabled={isLoading}>
+          <Button className="min-h-11 flex-1 sm:flex-none" variant="secondary" onClick={onClose} disabled={isLoading}>
             Batal
           </Button>
-          <Button type="submit" form="transaction-form" disabled={isLoading}>
+          <Button className="min-h-11 flex-1 sm:flex-none" type="submit" form="transaction-form" disabled={isLoading}>
             {isLoading ? (
               <span className="flex items-center gap-2">
                 <LoadingButton />
@@ -124,7 +124,7 @@ export function TransactionFormModal({
         </>
       }
     >
-      <form id="transaction-form" onSubmit={handleSubmit} className="space-y-4">
+      <form id="transaction-form" onSubmit={handleSubmit} className="space-y-5">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-600">{error}</p>
