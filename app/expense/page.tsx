@@ -25,13 +25,6 @@ export default function ExpensePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all')
 
-  const fetchUserInfo = useCallback(async () => {
-    try {
-      const res = await fetch("/api/user")
-      if (res.ok) setUserName((await res.json()).name)
-    } catch {}
-  }, [])
-
   const fetchTransactions = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -42,9 +35,37 @@ export default function ExpensePage() {
   }, [])
 
   useEffect(() => {
-    void fetchTransactions()
-    void fetchUserInfo()
-  }, [fetchTransactions, fetchUserInfo])
+    let cancelled = false
+
+    async function loadInitialData() {
+      try {
+        const [transactionsRes, userRes] = await Promise.all([
+          fetch(`/api/transactions?type=expense&t=${Date.now()}`),
+          fetch("/api/user"),
+        ])
+
+        if (transactionsRes.ok) {
+          const data: TransactionData[] = await transactionsRes.json()
+          if (!cancelled) setTransactions(data)
+        }
+
+        if (userRes.ok) {
+          const user = await userRes.json()
+          if (!cancelled) setUserName(user.name)
+        }
+      } catch {
+        // Keep the page usable if the initial request fails.
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+
+    void loadInitialData()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleSuccess = () => { 
     fetchTransactions()
