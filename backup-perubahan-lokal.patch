@@ -1,0 +1,34 @@
+diff --git a/app/expense/page.tsx b/app/expense/page.tsx
+index 493bb50..76bfac0 100644
+--- a/app/expense/page.tsx
++++ b/app/expense/page.tsx
+@@ -33,12 +33,6 @@ export default function ExpensePage() {
+   }, [])
+ 
+   const fetchTransactions = useCallback(async () => {
+-    setIsLoading(true)
+-    try {
+-      const res = await fetch(`/api/transactions?type=expense&t=${Date.now()}`)
+-      if (res.ok) setTransactions(await res.json())
+-    } catch {}
+-    finally { setIsLoading(false) }
+   }, [])
+ 
+   useEffect(() => {
+diff --git a/app/income/page.tsx b/app/income/page.tsx
+index 8c3f7d9..58ddaa6 100644
+--- a/app/income/page.tsx
++++ b/app/income/page.tsx
+@@ -33,12 +33,6 @@ export default function IncomePage() {
+   }, [])
+ 
+   const fetchTransactions = useCallback(async () => {
+-    setIsLoading(true)
+-    try {
+-      const res = await fetch(`/api/transactions?type=income&t=${Date.now()}`)
+-      if (res.ok) setTransactions(await res.json())
+-    } catch {}
+-    finally { setIsLoading(false) }
+   }, [])
+ 
+   useEffect(() => {
