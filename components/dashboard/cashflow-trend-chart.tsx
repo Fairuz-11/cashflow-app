@@ -80,7 +80,7 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
                     : "bg-blue-100 text-blue-700 ring-blue-200/70"
               )}>
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
               </span>
             </div>
