@@ -1,9 +1,9 @@
 import { requireAuth } from "@/lib/session"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
-import { getSummary, getRecentTransactions, getWeeklyData } from "@/lib/actions/transaction"
+import { getSummary, getRecentTransactions, getBalanceTimeline } from "@/lib/actions/transaction"
 import { HeroCard } from "@/components/dashboard/hero-card"
 import { CashflowTrendChart } from "@/components/dashboard/cashflow-trend-chart"
-import { WeeklyBarChart } from "@/components/dashboard/weekly-bar-chart"
+import { CashflowLineChart } from "@/components/dashboard/cashflow-line-chart"
 import { SpendingCategoryChart } from "@/components/dashboard/spending-category-chart"
 import { AIInsights } from "@/components/dashboard/ai-insights"
 import { UpcomingTransactions } from "@/components/dashboard/upcoming-transactions"
@@ -13,12 +13,12 @@ import { Suspense } from "react"
 export const revalidate = 30
 
 async function ChartsSection() {
-  const weeklyData = await getWeeklyData()
+  const balanceData = await getBalanceTimeline()
   const summary = await getSummary()
 
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-      <WeeklyBarChart weeklyData={weeklyData} />
+      <CashflowLineChart balanceData={balanceData} />
       <SpendingCategoryChart
         totalIncome={summary.totalIncome}
         totalExpense={summary.totalExpense}
