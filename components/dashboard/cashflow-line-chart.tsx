@@ -51,7 +51,11 @@ export function CashflowLineChart({ balanceData }: CashflowLineChartProps) {
     const inRange = balanceData.filter((point) => point.date >= cutoffKey)
 
     // Keep the balance immediately before the range so the line starts from its prior level.
-    const previous = balanceData.findLast((point) => point.date < cutoffKey)
+    let previous: (typeof balanceData)[number] | undefined
+    for (const point of balanceData) {
+      if (point.date >= cutoffKey) break
+      previous = point
+    }
     return previous ? [previous, ...inRange] : inRange
   }, [balanceData, timeRange])
 
