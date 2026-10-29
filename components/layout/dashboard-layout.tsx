@@ -20,14 +20,14 @@ export function DashboardLayout({ children, userName }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen min-w-0 bg-gray-50">
       <Sidebar userName={userName} onLogout={handleLogout} />
 
       {/* 
         Mobile:  pt-14 (top bar) + pb-16 (bottom nav) 
         Desktop: p-8, sidebar ada di kiri 
       */}
-      <main className="flex-1 pt-20 pb-24 px-4 lg:pt-8 lg:pb-8 lg:px-8 min-w-0">
+      <main className="min-w-0 flex-1 px-3 pt-20 pb-28 sm:px-4 sm:pb-24 md:px-6 lg:px-8 lg:pt-8 lg:pb-8">
         {children}
       </main>
     </div>

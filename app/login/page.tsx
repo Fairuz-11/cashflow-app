@@ -117,7 +117,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-[100dvh] min-w-0">
 
       {/* ── LEFT PANEL ── */}
       <div
@@ -183,7 +183,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+      <div className="flex w-full items-center justify-center bg-gray-50 px-4 py-6 sm:p-8 lg:w-1/2">
         <div className="w-full max-w-sm">
 
           {/* mobile logo */}
@@ -198,7 +198,7 @@ export default function LoginPage() {
           </div>
 
           {/* card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
             <div className="mb-7">
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Selamat datang kembali</h1>
               <p className="text-gray-400 mt-1 text-sm">Masuk ke akun Anda untuk melanjutkan</p>
@@ -240,7 +240,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-1 py-3.5 px-4 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+                className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed"
                 style={{
                   background: isLoading ? "#93c5fd" : "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)",
                   boxShadow: isLoading ? "none" : "0 4px 14px rgba(37,99,235,0.35)",
