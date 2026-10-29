@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { getSummary, getRecentTransactions, getWeeklyData } from "@/lib/actions/transaction"
 import { HeroCard } from "@/components/dashboard/hero-card"
 import { CashflowTrendChart } from "@/components/dashboard/cashflow-trend-chart"
-import { WeeklyBarChart } from "@/components/dashboard/weekly-bar-chart"
+import { CashflowLineChart } from "@/components/dashboard/cashflow-line-chart"
 import { SpendingCategoryChart } from "@/components/dashboard/spending-category-chart"
 import { AIInsights } from "@/components/dashboard/ai-insights"
 import { UpcomingTransactions } from "@/components/dashboard/upcoming-transactions"
@@ -18,7 +18,7 @@ async function ChartsSection() {
 
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-      <WeeklyBarChart weeklyData={weeklyData} />
+      <CashflowLineChart weeklyData={weeklyData} />
       <SpendingCategoryChart
         totalIncome={summary.totalIncome}
         totalExpense={summary.totalExpense}
