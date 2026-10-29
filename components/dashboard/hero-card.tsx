@@ -6,52 +6,52 @@ interface HeroCardProps {
 }
 
 export function HeroCard({ balance, changePercent }: HeroCardProps) {
-  const fmt = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n)
-  
-  return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-6 text-white">
-      {/* Decorative circles */}
-      <div className="absolute -right-8 -top-8 w-40 h-40 bg-emerald-500 rounded-full opacity-20 blur-3xl" />
-      <div className="absolute right-16 top-16 w-24 h-24 bg-blue-500 rounded-full opacity-10 blur-2xl" />
-      
-      {/* Mini chart decoration */}
-      <div className="absolute right-6 top-6 opacity-30">
-        <svg width="120" height="60" viewBox="0 0 120 60" fill="none">
-          <path d="M0 40 Q 20 30, 40 35 T 80 25 T 120 20" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.5"/>
-          <path d="M0 45 Q 20 35, 40 40 T 80 30 T 120 25" stroke="currentColor" strokeWidth="3" fill="none"/>
-        </svg>
-      </div>
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(n)
 
-      {/* Content */}
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm text-gray-300">Total Balance</span>
-          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  const isPositive = Number.parseFloat(changePercent) >= 0
+
+  return (
+    <section className="relative isolate overflow-hidden rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_18px_55px_-35px_rgba(16,185,129,0.35)] sm:p-8">
+      <div className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-2/3 bg-gradient-to-l from-emerald-50/90 via-emerald-50/40 to-transparent" />
+      <div className="pointer-events-none absolute -right-12 -top-20 -z-10 h-64 w-64 rounded-full border-[1px] border-emerald-100/80" />
+      <div className="pointer-events-none absolute -right-2 -top-10 -z-10 h-44 w-44 rounded-full border-[1px] border-emerald-100/70" />
+
+      <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
+        <div className="min-w-0">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-xs font-semibold tracking-wide text-emerald-700">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" />
+            TOTAL BALANCE
+          </div>
+
+          <p className="mb-2 text-sm font-medium text-slate-500">Your available balance</p>
+          <h2 className="break-long-content text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
+            {fmt(balance)}
+          </h2>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
+            <span className={"inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold " + (isPositive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700")}>
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isPositive ? "M7 14l5-5 5 5" : "M7 10l5 5 5-5"} />
+              </svg>
+              {Math.abs(Number.parseFloat(changePercent))}%
+            </span>
+            <span className="text-slate-500">of total income retained</span>
+          </div>
+        </div>
+
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 sm:mb-1">
+          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3.75 7.5A2.25 2.25 0 016 5.25h12A2.25 2.25 0 0120.25 7.5v9A2.25 2.25 0 0118 18.75H6A2.25 2.25 0 013.75 16.5v-9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3.75 9h16.5M7.5 14.25h3" />
           </svg>
         </div>
-        
-        <div className="mb-3">
-          <h2 className="text-4xl font-bold tracking-tight">{fmt(balance)}</h2>
-        </div>
-        
-        <div className="flex items-center gap-2 text-sm">
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${
-            parseFloat(changePercent) >= 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
-          }`}>
-            {parseFloat(changePercent) >= 0 ? '↑' : '↓'} {Math.abs(parseFloat(changePercent))}%
-          </div>
-          <span className="text-gray-400">vs last month</span>
-        </div>
       </div>
-
-      {/* Dollar icon */}
-      <div className="absolute right-8 bottom-6 w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-        <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-    </div>
+    </section>
   )
 }
