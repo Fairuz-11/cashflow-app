@@ -199,6 +199,51 @@ export async function getTransaction(id: string): Promise<TransactionData | null
   return toTransactionData(transaction)
 }
 
+// Get daily cumulative net balance for the cashflow chart, from the first transaction to today.
+export const getBalanceTimeline = cache(async () => {
+  const user = await requireAuth()
+
+  const transactions = await prisma.transaction.findMany({
+    where: { userId: user.id },
+    orderBy: { transactionDate: "asc" },
+    select: { type: true, amount: true, transactionDate: true },
+  })
+
+  if (transactions.length === 0) return []
+
+  const dailyNet = new Map<string, number>()
+  for (const transaction of transactions) {
+    const dateKey = transaction.transactionDate.toISOString().slice(0, 10)
+    const signedAmount = Number(transaction.amount) * (transaction.type === "income" ? 1 : -1)
+    dailyNet.set(dateKey, (dailyNet.get(dateKey) ?? 0) + signedAmount)
+  }
+
+  const firstDate = transactions[0].transactionDate.toISOString().slice(0, 10)
+  const today = new Date()
+  const lastDate = today.toISOString().slice(0, 10)
+  const currentDate = new Date(`${firstDate}T00:00:00.000Z`)
+  const endDate = new Date(`${lastDate}T00:00:00.000Z`)
+  const timeline: Array<{ date: string; label: string; balance: number }> = []
+  let balance = 0
+
+  while (currentDate <= endDate) {
+    const date = currentDate.toISOString().slice(0, 10)
+    balance += dailyNet.get(date) ?? 0
+    timeline.push({
+      date,
+      label: new Date(`${date}T12:00:00.000Z`).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      balance,
+    })
+    currentDate.setUTCDate(currentDate.getUTCDate() + 1)
+  }
+
+  return timeline
+})
+
 // Get weekly data for chart - cached per request
 export const getWeeklyData = cache(async () => {
   const user = await requireAuth()
