@@ -32,7 +32,7 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
     const startKey = start.toISOString().slice(0, 10)
     const points = timeline.filter((point) => point.date >= startKey)
     const previous = [...timeline].reverse().find((point) => point.date < startKey)
-    const baseline = previous?.balance
+    const baseline = selected.days === 0 ? 0 : previous?.balance
     const change = currentBalance - (baseline ?? (points[0]?.balance ?? 0))
     const percent = baseline && baseline !== 0 ? (change / baseline) * 100 : null
     return { points: points.length ? points : [latest], change, percent }
