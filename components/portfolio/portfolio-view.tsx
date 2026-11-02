@@ -50,8 +50,8 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
   }, [timeline, period, latest, currentBalance])
 
   const values = performance.points.length ? performance.points.map((point) => point.balance) : [0]
-  const min = Math.min(...values, ...(metric === "balance" ? [currentBalance] : [0]))
-  const max = Math.max(...values, ...(metric === "balance" ? [currentBalance] : [0]))
+  const min = Math.min(...values, currentBalance)
+  const max = Math.max(...values, currentBalance)
   const range = max - min || Math.max(Math.abs(max) * 0.08, 1)
   const chartPoints = values.map((value, index) => {
     const x = values.length === 1 ? 0 : (index / (values.length - 1)) * 100
@@ -78,21 +78,17 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
         <section>
           <p className="text-sm font-medium text-[#8b918e]">Total Saldo</p>
           <h2 className="mt-2 break-words text-[2.35rem] font-bold leading-none tracking-tight text-white sm:text-5xl">{currency(currentBalance)}</h2>
-          {metric === "balance" ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+            <span className={positive ? "font-semibold text-[#00b386]" : "font-semibold text-[#f87171]"}>
+              {positive ? "+" : ""}{currency(performance.change)}
+            </span>
+            {performance.percent !== null && (
               <span className={positive ? "font-semibold text-[#00b386]" : "font-semibold text-[#f87171]"}>
-                {positive ? "+" : ""}{currency(performance.change)}
+                ({positive ? "+" : ""}{performance.percent.toFixed(2)}%)
               </span>
-              {performance.percent !== null && (
-                <span className={positive ? "font-semibold text-[#00b386]" : "font-semibold text-[#f87171]"}>
-                  ({positive ? "+" : ""}{performance.percent.toFixed(2)}%)
-                </span>
-              )}
-              <span className="text-xs text-[#737b76]">Perubahan saldo · {period}</span>
-            </div>
-          ) : (
-            <p className="mt-3 text-xs text-[#737b76]">Akumulasi seluruh transaksi tercatat</p>
-          )}
+            )}
+            <span className="text-xs text-[#737b76]">Perubahan saldo · {period}</span>
+          </div>
         </section>
 
         <section className="mt-7">
