@@ -17,7 +17,7 @@ const currency = (value: number) => new Intl.NumberFormat("id-ID", {
   style: "currency", currency: "IDR", maximumFractionDigits: 0,
 }).format(value)
 
-export function PortfolioView({ timeline }: { timeline: TimelinePoint[] }) {
+export function PortfolioView({ timeline, totalIncome, totalExpense }: { timeline: TimelinePoint[]; totalIncome: number; totalExpense: number }) {
   const [period, setPeriod] = useState("1M")
   const latest = timeline[timeline.length - 1]
   const currentBalance = latest?.balance ?? 0
@@ -107,18 +107,18 @@ export function PortfolioView({ timeline }: { timeline: TimelinePoint[] }) {
       <section className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-sm text-slate-500">Total Pemasukan</p>
-          <p className="mt-2 text-xl font-bold text-emerald-700">{currency(timeline.length ? Math.max(0, currentBalance) : 0)}</p>
-          <p className="mt-1 text-xs text-slate-400">Saldo bersih saat ini bukan total pemasukan</p>
+          <p className="mt-2 text-xl font-bold text-emerald-700">{currency(totalIncome)}</p>
+          <p className="mt-1 text-xs text-slate-400">Akumulasi seluruh pemasukan</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Perubahan Saldo</p>
-          <p className={`mt-2 text-xl font-bold ${positive ? "text-emerald-700" : "text-rose-600"}`}>{positive ? "+" : ""}{currency(performance.change)}</p>
-          <p className="mt-1 text-xs text-slate-400">Pada periode terpilih</p>
+          <p className="text-sm text-slate-500">Total Pengeluaran</p>
+          <p className="mt-2 text-xl font-bold text-rose-600">{currency(totalExpense)}</p>
+          <p className="mt-1 text-xs text-slate-400">Akumulasi seluruh pengeluaran</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Jumlah Hari Tercatat</p>
-          <p className="mt-2 text-xl font-bold text-slate-900">{timeline.length}</p>
-          <p className="mt-1 text-xs text-slate-400">Sejak transaksi pertama</p>
+          <p className="text-sm text-slate-500">Net Cashflow</p>
+          <p className={`mt-2 text-xl font-bold ${totalIncome - totalExpense >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{currency(totalIncome - totalExpense)}</p>
+          <p className="mt-1 text-xs text-slate-400">Pemasukan dikurangi pengeluaran</p>
         </div>
       </section>
     </div>
