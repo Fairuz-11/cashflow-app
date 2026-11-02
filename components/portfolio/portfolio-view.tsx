@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react"
 
 type TimelinePoint = { date: string; label: string; balance: number }
-type Metric = "balance" | "income" | "expense"
 
 const periods = [
   { label: "1D", days: 1 },
@@ -31,7 +30,6 @@ const compactCurrency = (value: number) => {
 
 export function PortfolioView({ timeline, totalIncome, totalExpense }: { timeline: TimelinePoint[]; totalIncome: number; totalExpense: number }) {
   const [period, setPeriod] = useState("1M")
-  const [metric, setMetric] = useState<Metric>("balance")
   const latest = timeline[timeline.length - 1]
   const currentBalance = latest?.balance ?? 0
 
@@ -51,17 +49,7 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
     return { points: points.length ? points : [latest], change, percent }
   }, [timeline, period, latest, currentBalance])
 
-  const chartValues = useMemo(() => {
-    const points = performance.points
-    if (metric === "balance") return points.map((point) => point.balance)
-    return points.map((point, index) => {
-      const previous = index > 0 ? points[index - 1].balance : 0
-      const movement = point.balance - previous
-      return metric === "income" ? Math.max(0, movement) : Math.max(0, -movement)
-    })
-  }, [performance.points, metric])
-
-  const values = chartValues.length ? chartValues : [0]
+  const values = performance.points.length ? performance.points.map((point) => point.balance) : [0]
   const min = Math.min(...values, ...(metric === "balance" ? [currentBalance] : [0]))
   const max = Math.max(...values, ...(metric === "balance" ? [currentBalance] : [0]))
   const range = max - min || Math.max(Math.abs(max) * 0.08, 1)
@@ -73,9 +61,7 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
   const line = chartPoints.map((point) => `${point.x},${point.y}`).join(" ")
   const area = `0,100 ${line} 100,100`
   const positive = performance.change >= 0
-  const mainValue = metric === "balance" ? currentBalance : metric === "income" ? totalIncome : totalExpense
-  const metricTitle = metric === "balance" ? "Total Saldo" : metric === "income" ? "Total Pemasukan" : "Total Pengeluaran"
-  const chartColor = metric === "expense" ? "#f87171" : "#00b386"
+  const chartColor = "#00b386"
 
   return (
     <div className="-mx-4 -my-6 min-h-[calc(100vh-4rem)] bg-[#101211] px-4 pb-10 pt-6 text-white sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -90,8 +76,8 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
         </header>
 
         <section>
-          <p className="text-sm font-medium text-[#8b918e]">{metricTitle}</p>
-          <h2 className="mt-2 break-words text-[2.35rem] font-bold leading-none tracking-tight text-white sm:text-5xl">{currency(mainValue)}</h2>
+          <p className="text-sm font-medium text-[#8b918e]">Total Saldo</p>
+          <h2 className="mt-2 break-words text-[2.35rem] font-bold leading-none tracking-tight text-white sm:text-5xl">{currency(currentBalance)}</h2>
           {metric === "balance" ? (
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
               <span className={positive ? "font-semibold text-[#00b386]" : "font-semibold text-[#f87171]"}>
@@ -148,16 +134,18 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
 
         <section className="mt-5">
           <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.025]">
-            {([
-              { key: "balance", label: "Saldo", value: currentBalance },
-              { key: "income", label: "Pemasukan", value: totalIncome },
-              { key: "expense", label: "Pengeluaran", value: totalExpense },
-            ] as const).map((item, index) => (
-              <button key={item.key} onClick={() => setMetric(item.key)} className={`min-w-0 px-2 py-4 text-center transition sm:px-4 ${index > 0 ? "border-l border-white/10" : ""} ${metric === item.key ? "bg-[#00b386]/10" : "hover:bg-white/[0.04]"}`} aria-pressed={metric === item.key}>
-                <p className={`text-[10px] sm:text-xs ${metric === item.key ? "text-[#00b386]" : "text-[#858d88]"}`}>{item.label}</p>
-                <p className="mt-1 truncate text-sm font-semibold tabular-nums text-white sm:text-base">{compactCurrency(item.value)}</p>
-              </button>
-            ))}
+            <div className="min-w-0 px-2 py-4 text-center sm:px-4">
+              <p className="text-[10px] text-[#858d88] sm:text-xs">Saldo</p>
+              <p className="mt-1 truncate text-sm font-semibold tabular-nums text-white sm:text-base">{compactCurrency(currentBalance)}</p>
+            </div>
+            <div className="min-w-0 border-l border-white/10 px-2 py-4 text-center sm:px-4">
+              <p className="text-[10px] text-[#858d88] sm:text-xs">Pemasukan</p>
+              <p className="mt-1 truncate text-sm font-semibold tabular-nums text-[#00b386] sm:text-base">{compactCurrency(totalIncome)}</p>
+            </div>
+            <div className="min-w-0 border-l border-white/10 px-2 py-4 text-center sm:px-4">
+              <p className="text-[10px] text-[#858d88] sm:text-xs">Pengeluaran</p>
+              <p className="mt-1 truncate text-sm font-semibold tabular-nums text-[#f87171] sm:text-base">{compactCurrency(totalExpense)}</p>
+            </div>
           </div>
         </section>
 
