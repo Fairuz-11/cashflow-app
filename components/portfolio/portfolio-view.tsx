@@ -28,7 +28,7 @@ export function PortfolioView({ timeline, totalIncome, totalExpense }: { timelin
     const start = new Date()
     if (selected.days === -1) start.setMonth(0, 1)
     else if (selected.days > 0) start.setDate(start.getDate() - selected.days)
-    else start.setFullYear(1970)
+    else { start.setFullYear(1970, 0, 1); start.setHours(0, 0, 0, 0) }
     const startKey = start.toISOString().slice(0, 10)
     const points = timeline.filter((point) => point.date >= startKey)
     const previous = [...timeline].reverse().find((point) => point.date < startKey)
