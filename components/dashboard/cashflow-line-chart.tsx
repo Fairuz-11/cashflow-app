@@ -91,7 +91,7 @@ export function CashflowLineChart({ balanceData }: CashflowLineChartProps) {
   ]
 
   return (
-    <section className="min-w-0 rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/40 sm:p-6">
+    <section className="min-w-0 w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-4 shadow-sm shadow-slate-200/40 sm:p-6">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">Cashflow market</p>
@@ -129,12 +129,12 @@ export function CashflowLineChart({ balanceData }: CashflowLineChartProps) {
 
       {plottedData.length > 0 ? (
         <>
-          <div className="w-full overflow-x-auto">
+          <div className="w-full min-w-0">
             <svg
               viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
               role="img"
               aria-label="Grafik saldo kumulatif berdasarkan transaksi"
-              className="h-auto min-w-[520px] w-full overflow-visible"
+              className="block h-auto w-full min-w-0 overflow-visible"
             >
               <defs>
                 <linearGradient id="balanceArea" x1="0" y1="0" x2="0" y2="1">
@@ -165,6 +165,7 @@ export function CashflowLineChart({ balanceData }: CashflowLineChartProps) {
                     tabIndex={0}
                     role="button"
                     aria-label={`${point.label}: saldo ${formatCurrency(point.balance)}`}
+                    onClick={() => setActiveIndex(index)}
                     onMouseEnter={() => setActiveIndex(index)}
                     onMouseLeave={() => setActiveIndex(null)}
                     onFocus={() => setActiveIndex(index)}
@@ -195,7 +196,7 @@ export function CashflowLineChart({ balanceData }: CashflowLineChartProps) {
                 </div>
               </div>
             ) : (
-              <p className="flex min-h-[42px] items-center text-xs text-slate-400">Arahkan kursor atau fokuskan titik grafik untuk melihat saldo pada tanggal tersebut.</p>
+              <p className="flex min-h-[42px] items-center text-xs text-slate-400">Ketuk atau arahkan kursor ke titik grafik untuk melihat saldo pada tanggal tersebut.</p>
             )}
           </div>
         </>
