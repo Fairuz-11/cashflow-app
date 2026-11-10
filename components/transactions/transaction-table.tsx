@@ -12,9 +12,80 @@ interface TransactionTableProps {
   onDelete?: () => void
 }
 
+/* ─── Delete Confirmation Modal ─────────────────────────────── */
+function DeleteConfirmModal({
+  transaction,
+  onConfirm,
+  onCancel,
+  isDeleting,
+}: {
+  transaction: TransactionData
+  onConfirm: () => void
+  onCancel: () => void
+  isDeleting: boolean
+}) {
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(amount)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={!isDeleting ? onCancel : undefined} />
+
+      {/* Modal */}
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 animate-in fade-in zoom-in-95 duration-200">
+        {/* Icon */}
+        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+
+        {/* Text */}
+        <h3 className="text-lg font-semibold text-gray-900 text-center mb-1">Hapus Transaksi?</h3>
+        <p className="text-sm text-gray-500 text-center mb-1">Transaksi ini akan dihapus permanen.</p>
+
+        {/* Transaction preview */}
+        <div className="mt-3 mb-5 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+          <p className="text-sm font-medium text-gray-900 truncate">{transaction.description}</p>
+          <p className={`text-sm font-semibold mt-0.5 ${transaction.type === "income" ? "text-emerald-600" : "text-red-600"}`}>
+            {transaction.type === "income" ? "+" : "-"}{formatCurrency(transaction.amount)}
+          </p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="flex-1 py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            Batal
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="flex-1 py-2.5 px-4 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {isDeleting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Menghapus...
+              </>
+            ) : "Hapus"}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Main Table Component ───────────────────────────────────── */
 function TransactionTableComponent({ transactions, onEdit, onDelete }: TransactionTableProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmTarget, setConfirmTarget] = useState<TransactionData | null>(null)
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -30,14 +101,19 @@ function TransactionTableComponent({ transactions, onEdit, onDelete }: Transacti
       year: "numeric",
     }).format(new Date(date))
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) return
-    setDeletingId(id)
+  const handleDeleteClick = (transaction: TransactionData) => {
+    setConfirmTarget(transaction)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmTarget) return
+    setDeletingId(confirmTarget.id)
     try {
-      const result = await deleteTransaction(id)
+      const result = await deleteTransaction(confirmTarget.id)
       if (result.success) {
+        setConfirmTarget(null)
         router.refresh()
-        onDelete?.() // Trigger parent refresh
+        onDelete?.()
       } else {
         alert(result.error || "Gagal menghapus transaksi")
       }
@@ -48,6 +124,44 @@ function TransactionTableComponent({ transactions, onEdit, onDelete }: Transacti
     }
   }
 
+  return (
+    <>
+      {confirmTarget && (
+        <DeleteConfirmModal
+          transaction={confirmTarget}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmTarget(null)}
+          isDeleting={deletingId === confirmTarget.id}
+        />
+      )}
+      <TableContent
+        transactions={transactions}
+        deletingId={deletingId}
+        onEdit={onEdit}
+        onDelete={handleDeleteClick}
+        formatCurrency={formatCurrency}
+        formatDate={formatDate}
+      />
+    </>
+  )
+}
+
+/* ─── Table Content ──────────────────────────────────────────── */
+function TableContent({
+  transactions,
+  deletingId,
+  onEdit,
+  onDelete,
+  formatCurrency,
+  formatDate,
+}: {
+  transactions: TransactionData[]
+  deletingId: string | null
+  onEdit: (t: TransactionData) => void
+  onDelete: (t: TransactionData) => void
+  formatCurrency: (n: number) => string
+  formatDate: (d: Date) => string
+}) {
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
@@ -98,7 +212,7 @@ function TransactionTableComponent({ transactions, onEdit, onDelete }: Transacti
                   <Button size="sm" variant="ghost" onClick={() => onEdit(t)} disabled={deletingId === t.id}>
                     Edit
                   </Button>
-                  <Button size="sm" variant="danger" onClick={() => handleDelete(t.id)} disabled={deletingId === t.id}>
+                  <Button size="sm" variant="danger" onClick={() => onDelete(t)} disabled={deletingId === t.id}>
                     {deletingId === t.id ? "..." : "Hapus"}
                   </Button>
                 </td>
@@ -147,7 +261,7 @@ function TransactionTableComponent({ transactions, onEdit, onDelete }: Transacti
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(t.id)}
+                  onClick={() => onDelete(t)}
                   disabled={deletingId === t.id}
                   className="px-2 py-0.5 text-xs font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-50"
                 >
