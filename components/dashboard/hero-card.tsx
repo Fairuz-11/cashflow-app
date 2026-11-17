@@ -3,9 +3,11 @@
 interface HeroCardProps {
   balance: number
   changePercent: string
+  totalIncome?: number
+  totalExpense?: number
 }
 
-export function HeroCard({ balance, changePercent }: HeroCardProps) {
+export function HeroCard({ balance, changePercent, totalIncome = 0, totalExpense = 0 }: HeroCardProps) {
   const fmt = (n: number) =>
     new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -14,50 +16,78 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
       maximumFractionDigits: 0,
     }).format(n)
 
+  const fmtShort = (n: number) => {
+    const abs = Math.abs(n)
+    if (abs >= 1_000_000) return (n < 0 ? "-" : "") + "Rp " + (abs / 1_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 }) + " jt"
+    if (abs >= 1_000) return (n < 0 ? "-" : "") + "Rp " + (abs / 1_000).toLocaleString("id-ID", { maximumFractionDigits: 0 }) + " rb"
+    return fmt(n)
+  }
+
   const parsedPercent = Number.parseFloat(changePercent) || 0
   const isPositive = parsedPercent >= 0
 
+  // Bar chart ratio
+  const total = totalIncome + totalExpense
+  const incomeRatio = total > 0 ? (totalIncome / total) * 100 : 50
+  const expenseRatio = total > 0 ? (totalExpense / total) * 100 : 50
+
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-gray-900 p-6 sm:p-8">
+    <section
+      className="relative overflow-hidden rounded-2xl p-6 sm:p-8"
+      style={{
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+      }}
+    >
+      {/* Top-right glow */}
+      <div
+        className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)" }}
+        aria-hidden="true"
+      />
+      {/* Bottom-left glow */}
+      <div
+        className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)" }}
+        aria-hidden="true"
+      />
 
-      {/* Subtle background texture */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/[0.03]" />
-        <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/[0.02]" />
-      </div>
+      {/* Grid lines background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
-        {/* Left: main info */}
-        <div className="space-y-5">
+        {/* ── LEFT: Balance ── */}
+        <div className="flex-1 space-y-6">
 
-          {/* Label */}
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-              <svg className="h-4 w-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="3.5" y="5.5" width="17" height="13" rx="2.5" strokeWidth="1.7" />
-                <path d="M3.5 9.5h17M7 14h3" strokeWidth="1.7" strokeLinecap="round" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Total Balance</p>
-            </div>
+          {/* Badge */}
+          <div className="flex items-center gap-2 w-fit">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40">
+              Total Balance
+            </p>
           </div>
 
-          {/* Balance */}
+          {/* Main balance */}
           <div>
-            <p className="text-xs text-white/40 mb-1">Saldo bersih dari semua transaksi</p>
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            <p className="text-xs text-white/35 mb-2">Saldo bersih dari semua transaksi</p>
+            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
               {fmt(balance)}
             </h2>
           </div>
 
-          {/* Badge */}
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+          {/* Change badge */}
+          <div className="flex items-center gap-3">
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${
               isPositive
-                ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20"
-                : "bg-red-500/15 text-red-400 ring-1 ring-red-500/20"
+                ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-400/25"
+                : "bg-red-500/15 text-red-400 ring-1 ring-red-400/25"
             }`}>
               <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
@@ -65,29 +95,85 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
               </svg>
               {Math.abs(parsedPercent).toFixed(1)}%
             </span>
-            <span className="text-xs text-white/40">dari total pemasukan</span>
+            <span className="text-xs text-white/35">dari total pemasukan tersimpan</span>
           </div>
         </div>
 
-        {/* Right: mini chart */}
-        <div className="hidden sm:flex flex-col items-end gap-3 shrink-0">
-          <svg viewBox="0 0 180 60" className="w-44 h-auto overflow-visible">
-            <defs>
-              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="rgba(255,255,255,0.1)" />
-                <stop offset="100%" stopColor="rgba(255,255,255,0.5)" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M2 50 C25 46 35 32 55 36 S82 20 100 26 S128 10 150 14 S165 6 178 3"
-              fill="none"
-              stroke="url(#lineGrad)"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <circle cx="178" cy="3" r="3" fill="white" fillOpacity="0.6" />
-          </svg>
-          <p className="text-[10px] font-medium uppercase tracking-widest text-white/25">Money overview</p>
+        {/* ── DIVIDER ── */}
+        <div className="hidden lg:block w-px h-28 bg-white/10 shrink-0" />
+
+        {/* ── RIGHT: Income vs Expense breakdown ── */}
+        <div className="flex flex-col gap-5 lg:w-72 shrink-0">
+
+          {/* Header */}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
+            Ringkasan
+          </p>
+
+          {/* Income row */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                <span className="text-xs font-medium text-white/60">Pemasukan</span>
+              </div>
+              <span className="text-sm font-bold text-emerald-400">{fmtShort(totalIncome)}</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-white/10">
+              <div
+                className="h-1.5 rounded-full bg-emerald-400 transition-all duration-700"
+                style={{ width: `${incomeRatio}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Expense row */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-red-400" />
+                <span className="text-xs font-medium text-white/60">Pengeluaran</span>
+              </div>
+              <span className="text-sm font-bold text-red-400">{fmtShort(totalExpense)}</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-white/10">
+              <div
+                className="h-1.5 rounded-full bg-red-400 transition-all duration-700"
+                style={{ width: `${expenseRatio}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Mini chart */}
+          <div className="pt-1">
+            <svg viewBox="0 0 200 48" className="w-full h-auto overflow-visible">
+              <defs>
+                <linearGradient id="heroLineGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="rgba(16,185,129,0.2)" />
+                  <stop offset="100%" stopColor="rgba(16,185,129,0.8)" />
+                </linearGradient>
+                <linearGradient id="heroFillGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(16,185,129,0.15)" />
+                  <stop offset="100%" stopColor="rgba(16,185,129,0)" />
+                </linearGradient>
+              </defs>
+              {/* Fill area */}
+              <path
+                d="M0 40 C20 36 30 24 50 28 S75 14 95 18 S125 6 148 10 S170 4 200 2 L200 48 L0 48 Z"
+                fill="url(#heroFillGrad)"
+              />
+              {/* Line */}
+              <path
+                d="M0 40 C20 36 30 24 50 28 S75 14 95 18 S125 6 148 10 S170 4 200 2"
+                fill="none"
+                stroke="url(#heroLineGrad)"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <circle cx="200" cy="2" r="3" fill="#34d399" />
+              <circle cx="200" cy="2" r="6" fill="rgba(52,211,153,0.2)" />
+            </svg>
+          </div>
         </div>
 
       </div>
