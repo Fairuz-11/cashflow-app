@@ -95,8 +95,6 @@ export default async function DashboardPage() {
         <HeroCard
           balance={summary.profit}
           changePercent={summary.totalIncome > 0 ? ((summary.profit / summary.totalIncome) * 100).toFixed(1) : "0"}
-          totalIncome={summary.totalIncome}
-          totalExpense={summary.totalExpense}
         />
 
         <CashflowTrendChart
