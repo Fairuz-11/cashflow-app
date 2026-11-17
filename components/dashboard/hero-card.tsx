@@ -18,53 +18,78 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
   const isPositive = parsedPercent >= 0
 
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-gradient-to-br from-[#062f2a] via-[#075b4b] to-[#0d8061] p-6 text-white shadow-[0_24px_70px_-35px_rgba(5,150,105,0.65)] sm:p-8 lg:p-9">
-      <div className="pointer-events-none absolute inset-0 -z-10 opacity-20" aria-hidden="true">
-        <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full border border-white/40" />
-        <div className="absolute -right-4 -top-12 h-52 w-52 rounded-full border border-white/30" />
-        <div className="absolute right-10 top-8 h-32 w-32 rounded-full border border-white/20" />
-      </div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-2/3 bg-gradient-to-l from-emerald-300/10 to-transparent" aria-hidden="true" />
+    <section className="relative overflow-hidden rounded-2xl bg-gray-900 p-6 sm:p-8">
 
-      <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-        <div className="min-w-0">
-          <div className="mb-6 flex flex-wrap items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-emerald-100 shadow-inner shadow-white/5">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      {/* Subtle background texture */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/[0.03]" />
+        <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/[0.02]" />
+      </div>
+
+      <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+
+        {/* Left: main info */}
+        <div className="space-y-5">
+
+          {/* Label */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+              <svg className="h-4 w-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <rect x="3.5" y="5.5" width="17" height="13" rx="2.5" strokeWidth="1.7" />
                 <path d="M3.5 9.5h17M7 14h3" strokeWidth="1.7" strokeLinecap="round" />
               </svg>
-            </span>
+            </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-100/80">Total balance</p>
-              <p className="mt-1 text-xs text-white/60">Your financial overview</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Total Balance</p>
             </div>
           </div>
 
-          <p className="mb-2 text-sm font-medium text-emerald-50/75">Net balance from recorded transactions</p>
-          <h2 className="break-long-content text-3xl font-bold tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
-            {fmt(balance)}
-          </h2>
+          {/* Balance */}
+          <div>
+            <p className="text-xs text-white/40 mb-1">Saldo bersih dari semua transaksi</p>
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              {fmt(balance)}
+            </h2>
+          </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <span className={"inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold " + (isPositive ? "border-emerald-200/20 bg-emerald-300/15 text-emerald-100" : "border-rose-200/20 bg-rose-300/15 text-rose-100")}>
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isPositive ? "M7 14l5-5 5 5" : "M7 10l5 5 5-5"} />
+          {/* Badge */}
+          <div className="flex items-center gap-2">
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+              isPositive
+                ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20"
+                : "bg-red-500/15 text-red-400 ring-1 ring-red-500/20"
+            }`}>
+              <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
+                  d={isPositive ? "M7 14l5-5 5 5" : "M7 10l5 5 5-5"} />
               </svg>
               {Math.abs(parsedPercent).toFixed(1)}%
             </span>
-            <span className="text-xs font-medium text-white/65">of total income retained</span>
+            <span className="text-xs text-white/40">dari total pemasukan</span>
           </div>
         </div>
 
-        <div className="hidden w-40 shrink-0 self-center sm:block lg:w-48" aria-hidden="true">
-          <svg viewBox="0 0 180 76" className="h-auto w-full overflow-visible">
-            <path d="M2 62 C22 58 27 44 45 48 S72 30 88 37 S112 18 130 25 S155 9 178 5" fill="none" stroke="white" strokeOpacity=".15" strokeWidth="12" strokeLinecap="round" />
-            <path d="M2 62 C22 58 27 44 45 48 S72 30 88 37 S112 18 130 25 S155 9 178 5" fill="none" stroke="#a7f3d0" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx="178" cy="5" r="4" fill="#d1fae5" stroke="#065f46" strokeWidth="2" />
+        {/* Right: mini chart */}
+        <div className="hidden sm:flex flex-col items-end gap-3 shrink-0">
+          <svg viewBox="0 0 180 60" className="w-44 h-auto overflow-visible">
+            <defs>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.1)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0.5)" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M2 50 C25 46 35 32 55 36 S82 20 100 26 S128 10 150 14 S165 6 178 3"
+              fill="none"
+              stroke="url(#lineGrad)"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <circle cx="178" cy="3" r="3" fill="white" fillOpacity="0.6" />
           </svg>
-          <p className="mt-3 text-right text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45">Money overview</p>
+          <p className="text-[10px] font-medium uppercase tracking-widest text-white/25">Money overview</p>
         </div>
+
       </div>
     </section>
   )
