@@ -59,10 +59,10 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
           {/* Pengeluaran */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
+              <span className="h-2 w-2 rounded-full bg-blue-900 shrink-0" />
               <p className="text-sm text-slate-500">Total Pengeluaran</p>
             </div>
-            <p className="text-sm font-bold text-rose-600">{fmt(expense)}</p>
+            <p className="text-sm font-bold text-blue-900">{fmt(expense)}</p>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
                 style={{ width: `${incomeRatio}%` }}
               />
               <div
-                className="h-full rounded-r-full bg-rose-400 transition-all duration-700"
+                className="h-full rounded-r-full bg-blue-900 transition-all duration-700"
                 style={{ width: `${expenseRatio}%` }}
               />
             </div>
@@ -89,10 +89,10 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
         {/* Selisih */}
         <div
           className="flex items-center justify-between rounded-xl px-4 py-3"
-          style={{ background: isProfit ? "rgba(16,185,129,0.06)" : "rgba(239,68,68,0.06)" }}
+          style={{ background: isProfit ? "rgba(16,185,129,0.06)" : "rgba(15,23,42,0.06)" }}
         >
           <p className="text-sm font-medium text-slate-600">Selisih Bersih</p>
-          <p className={`text-base font-bold tracking-tight ${isProfit ? "text-slate-900" : "text-rose-600"}`}>
+          <p className={`text-base font-bold tracking-tight ${isProfit ? "text-slate-900" : "text-blue-900"}`}>
             {fmt(profit)}
           </p>
         </div>
@@ -104,9 +104,9 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
 
         <div className="grid grid-cols-3 divide-x divide-slate-100">
           {[
-            { label: "Total Pemasukan",   value: income,  cls: "text-emerald-600", dot: "bg-emerald-500" },
-            { label: "Total Pengeluaran", value: expense, cls: "text-rose-600",    dot: "bg-rose-500"    },
-            { label: "Selisih Bersih",    value: profit,  cls: isProfit ? "text-slate-900" : "text-rose-600", dot: isProfit ? "bg-slate-300" : "bg-rose-400" },
+    { label: "Total Pemasukan",   value: income,  cls: "text-emerald-600", dot: "bg-emerald-500" },
+            { label: "Total Pengeluaran", value: expense, cls: "text-blue-900",    dot: "bg-blue-900"    },
+            { label: "Selisih Bersih",    value: profit,  cls: isProfit ? "text-slate-900" : "text-blue-900", dot: isProfit ? "bg-slate-300" : "bg-blue-900" },
           ].map((item) => (
             <div key={item.label} className="px-6 py-6">
               <div className="flex items-center gap-2 mb-3">
@@ -129,7 +129,7 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
                 style={{ width: `${incomeRatio}%` }}
               />
               <div
-                className="h-full rounded-r-full bg-rose-400 transition-all duration-700"
+                className="h-full rounded-r-full bg-blue-900 transition-all duration-700"
                 style={{ width: `${expenseRatio}%` }}
               />
             </div>
@@ -139,7 +139,7 @@ export function CashflowTrendChart({ income, expense, profit }: CashflowTrendCha
                 <span className="text-[10px] text-slate-300">·</span>
                 <span className="text-[10px] text-slate-400">{expenseRatio}% pengeluaran</span>
               </div>
-              <span className={`text-[10px] font-semibold ${isProfit ? "text-emerald-600" : "text-rose-500"}`}>
+              <span className={`text-[10px] font-semibold ${isProfit ? "text-emerald-600" : "text-blue-900"}`}>
                 {isProfit ? "Surplus" : "Defisit"}
               </span>
             </div>
