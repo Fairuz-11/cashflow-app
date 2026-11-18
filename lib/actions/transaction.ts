@@ -22,24 +22,41 @@ function toTransactionData(t: Transaction): TransactionData {
 export const getSummary = cache(async () => {
   const user = await requireAuth()
 
-  const now = new Date()
+  // Gunakan zona waktu WIB (UTC+7)
+  const nowUTC = new Date()
+  const wibOffset = 7 * 60 * 60 * 1000
+  const nowWIB = new Date(nowUTC.getTime() + wibOffset)
 
-  // Awal minggu ini (Senin)
-  const startOfWeek = new Date(now)
-  const day = startOfWeek.getDay()
+  // Awal minggu ini (Senin) dalam WIB
+  const startOfWeek = new Date(nowWIB)
+  const day = startOfWeek.getUTCDay()
   const diff = day === 0 ? -6 : 1 - day // Senin = 1
-  startOfWeek.setDate(now.getDate() + diff)
-  startOfWeek.setHours(0, 0, 0, 0)
+  startOfWeek.setUTCDate(nowWIB.getUTCDate() + diff)
+  startOfWeek.setUTCHours(0, 0, 0, 0)
+  // Konversi kembali ke UTC untuk query database
+  const startOfWeekUTC = new Date(startOfWeek.getTime() - wibOffset)
 
-  // Awal bulan ini
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  startOfMonth.setHours(0, 0, 0, 0)
+  // Awal hari ini dalam WIB
+  const startOfTodayWIB = new Date(nowWIB)
+  startOfTodayWIB.setUTCHours(0, 0, 0, 0)
+  const startOfTodayUTC = new Date(startOfTodayWIB.getTime() - wibOffset)
+
+  // Akhir hari ini dalam WIB
+  const endOfTodayWIB = new Date(nowWIB)
+  endOfTodayWIB.setUTCHours(23, 59, 59, 999)
+  const endOfTodayUTC = new Date(endOfTodayWIB.getTime() - wibOffset)
+
+  // Awal bulan ini dalam WIB
+  const startOfMonth = new Date(Date.UTC(nowWIB.getUTCFullYear(), nowWIB.getUTCMonth(), 1, 0, 0, 0, 0))
+  const startOfMonthUTC = new Date(startOfMonth.getTime() - wibOffset)
 
   const [
     incomeResult,
     expenseResult,
     expenseWeekResult,
     expenseMonthResult,
+    incomeWeekResult,
+    expenseTodayResult,
   ] = await Promise.all([
     prisma.transaction.aggregate({
       where: { userId: user.id, type: "income" },
@@ -53,7 +70,7 @@ export const getSummary = cache(async () => {
       where: {
         userId: user.id,
         type: "expense",
-        transactionDate: { gte: startOfWeek },
+        transactionDate: { gte: startOfWeekUTC },
       },
       _sum: { amount: true },
     }),
@@ -61,7 +78,23 @@ export const getSummary = cache(async () => {
       where: {
         userId: user.id,
         type: "expense",
-        transactionDate: { gte: startOfMonth },
+        transactionDate: { gte: startOfMonthUTC },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "income",
+        transactionDate: { gte: startOfWeekUTC },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "expense",
+        transactionDate: { gte: startOfTodayUTC, lte: endOfTodayUTC },
       },
       _sum: { amount: true },
     }),
@@ -72,8 +105,10 @@ export const getSummary = cache(async () => {
   const profit = totalIncome - totalExpense
   const expenseThisWeek = Number(expenseWeekResult._sum.amount || 0)
   const expenseThisMonth = Number(expenseMonthResult._sum.amount || 0)
+  const incomeThisWeek = Number(incomeWeekResult._sum.amount || 0)
+  const expenseToday = Number(expenseTodayResult._sum.amount || 0)
 
-  return { totalIncome, totalExpense, profit, expenseThisWeek, expenseThisMonth }
+  return { totalIncome, totalExpense, profit, expenseThisWeek, expenseThisMonth, incomeThisWeek, expenseToday }
 })
 
 // Get recent transactions - cached per request

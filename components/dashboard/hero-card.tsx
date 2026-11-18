@@ -3,11 +3,18 @@
 interface HeroCardProps {
   balance: number
   changePercent: string
-  totalIncome?: number
-  totalExpense?: number
+  expenseThisWeek?: number
+  expenseToday?: number
+  incomeThisWeek?: number
 }
 
-export function HeroCard({ balance, changePercent }: HeroCardProps) {
+export function HeroCard({
+  balance,
+  changePercent,
+  expenseThisWeek = 0,
+  expenseToday = 0,
+  incomeThisWeek = 0,
+}: HeroCardProps) {
   const fmt = (n: number) =>
     new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -16,18 +23,33 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
       maximumFractionDigits: 0,
     }).format(n)
 
+  const fmtShort = (n: number) => {
+    const abs = Math.abs(n)
+    if (abs >= 1_000_000)
+      return "Rp\u00a0" + (abs / 1_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 }) + "\u00a0jt"
+    if (abs >= 1_000)
+      return "Rp\u00a0" + (abs / 1_000).toLocaleString("id-ID", { maximumFractionDigits: 0 }) + "\u00a0rb"
+    return fmt(n)
+  }
+
   const parsedPercent = Number.parseFloat(changePercent) || 0
   const isPositive = parsedPercent >= 0
 
+  const stats = [
+    { label: "Keluar minggu ini", value: fmtShort(expenseThisWeek), valueColor: "text-white/90" },
+    { label: "Keluar hari ini",   value: fmtShort(expenseToday),    valueColor: "text-white/90" },
+    { label: "Masuk minggu ini",  value: fmtShort(incomeThisWeek),  valueColor: "text-emerald-400" },
+  ]
+
   return (
     <section
-      className="relative overflow-hidden px-7 py-9 sm:px-10 sm:py-10"
+      className="relative overflow-hidden"
       style={{
         background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1e293b 100%)",
         borderRadius: "2rem",
       }}
     >
-      {/* ── Noise texture ── */}
+      {/* Noise texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.035]"
         style={{
@@ -37,72 +59,63 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
         aria-hidden="true"
       />
 
-      {/* ── Dot grid pattern top-right ── */}
+      {/* Blue glow */}
       <div
-        className="pointer-events-none absolute right-0 top-0 h-full w-1/2 opacity-[0.07]"
+        className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 65%)" }}
+        aria-hidden="true"
+      />
+
+      {/* Shimmer top border */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), rgba(147,197,253,0.25), transparent)" }}
+        aria-hidden="true"
+      />
+
+      {/* Dot grid */}
+      <div
+        className="pointer-events-none absolute right-0 top-0 h-full w-1/2 opacity-[0.06]"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
           backgroundSize: "20px 20px",
-          maskImage: "radial-gradient(ellipse 80% 80% at 90% 20%, black 30%, transparent 100%)",
-          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 90% 20%, black 30%, transparent 100%)",
+          maskImage: "radial-gradient(ellipse 70% 80% at 85% 20%, black 20%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 80% at 85% 20%, black 20%, transparent 100%)",
         }}
         aria-hidden="true"
       />
 
-      {/* ── Blue glow top-right ── */}
-      <div
-        className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 65%)" }}
-        aria-hidden="true"
-      />
+      {/* ── Main layout ── */}
+      <div className="relative flex flex-col lg:flex-row lg:items-stretch">
 
-      {/* ── Shimmer line top ── */}
-      <div
-        className="pointer-events-none absolute left-0 right-0 top-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 40%, rgba(147,197,253,0.3) 60%, transparent 100%)" }}
-        aria-hidden="true"
-      />
+        {/* LEFT — saldo utama */}
+        <div className="flex-1 px-7 py-8 sm:px-10 sm:py-10">
 
-      {/* ── Curved shape bottom-left ── */}
-      <div
-        className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full"
-        style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-10 -left-10 h-36 w-36 rounded-full"
-        style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}
-        aria-hidden="true"
-      />
-
-      <div className="relative flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-
-        {/* ── LEFT ── */}
-        <div className="space-y-6">
-
-          {/* Top chip */}
-          <div className="flex items-center gap-2 w-fit rounded-full px-3 py-1.5"
+          {/* Label chip */}
+          <div
+            className="mb-6 flex w-fit items-center gap-2 rounded-full px-3 py-1.5"
             style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.09)" }}
           >
-            <div className="h-1.5 w-1.5 rounded-full bg-blue-400" style={{ boxShadow: "0 0 6px rgba(96,165,250,0.8)" }} />
+            <div
+              className="h-1.5 w-1.5 rounded-full bg-blue-400"
+              style={{ boxShadow: "0 0 6px rgba(96,165,250,0.8)" }}
+            />
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-blue-300/80">
               Saldo Saat Ini
             </p>
           </div>
 
           {/* Balance */}
-          <div>
-            <p className="text-xs text-white/30 mb-2.5 tracking-wide">Dana tersedia</p>
-            <h2
-              className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
-              style={{ textShadow: "0 2px 24px rgba(59,130,246,0.3)" }}
-            >
-              {fmt(balance)}
-            </h2>
-          </div>
+          <p className="mb-2 text-xs text-white/30">Dana tersedia</p>
+          <h2
+            className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+            style={{ textShadow: "0 2px 24px rgba(59,130,246,0.25)" }}
+          >
+            {fmt(balance)}
+          </h2>
 
-          {/* Divider + badge row */}
-          <div className="flex items-center gap-3">
+          {/* % badge */}
+          <div className="mt-5 flex items-center gap-3">
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${
                 isPositive ? "text-emerald-300" : "text-red-300"
@@ -118,45 +131,44 @@ export function HeroCard({ balance, changePercent }: HeroCardProps) {
               </svg>
               {Math.abs(parsedPercent).toFixed(1)}%
             </span>
-            <span
-              className="h-4 w-px"
-              style={{ background: "rgba(255,255,255,0.12)" }}
-              aria-hidden="true"
-            />
             <span className="text-xs text-white/30">dari pemasukan tersimpan</span>
           </div>
         </div>
 
-        {/* ── RIGHT: chart ── */}
-        <div className="hidden sm:flex flex-col items-end gap-3 shrink-0 self-end pb-1">
-          <svg viewBox="0 0 180 64" className="w-44 h-auto overflow-visible">
-            <defs>
-              <linearGradient id="hcLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="rgba(96,165,250,0.15)" />
-                <stop offset="100%" stopColor="rgba(96,165,250,1)" />
-              </linearGradient>
-              <linearGradient id="hcArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(59,130,246,0.22)" />
-                <stop offset="100%" stopColor="rgba(59,130,246,0.0)" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0 52 C22 48 32 32 52 36 S80 20 100 24 S130 10 152 13 S166 6 180 3 L180 64 L0 64 Z"
-              fill="url(#hcArea)"
-            />
-            <path
-              d="M0 52 C22 48 32 32 52 36 S80 20 100 24 S130 10 152 13 S166 6 180 3"
-              fill="none"
-              stroke="url(#hcLine)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            <circle cx="180" cy="3" r="4" fill="#93c5fd" />
-            <circle cx="180" cy="3" r="9" fill="rgba(147,197,253,0.18)" />
-          </svg>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/20">
-            Balance trend
-          </p>
+        {/* Vertical divider — desktop only */}
+        <div
+          className="hidden lg:block lg:h-auto lg:w-px"
+          style={{ background: "rgba(255,255,255,0.07)" }}
+          aria-hidden="true"
+        />
+
+        {/* RIGHT — 3 stat */}
+        {/* Desktop: vertikal di kanan | Mobile: 3 kolom di bawah */}
+        <div className="px-7 pb-7 pt-0 sm:px-10 lg:flex lg:w-72 lg:flex-col lg:justify-center lg:py-10">
+          {/* Mobile: grid 3 kolom */}
+          <div className="grid grid-cols-3 gap-2 lg:hidden">
+            {stats.map((s) => (
+              <div key={s.label} className="rounded-xl px-3 py-3" style={{ background: "rgba(255,255,255,0.05)" }}>
+                <p className="mb-1 text-[10px] font-medium text-white/35 leading-tight">{s.label}</p>
+                <p className={`text-sm font-semibold tracking-tight ${s.valueColor}`}>{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: stack vertikal dengan divider */}
+          <div className="hidden lg:block">
+            {stats.map((s, i) => (
+              <div key={s.label}>
+                <div className="py-4">
+                  <p className="mb-1.5 text-[11px] font-medium text-white/35">{s.label}</p>
+                  <p className={`text-lg font-semibold tracking-tight ${s.valueColor}`}>{s.value}</p>
+                </div>
+                {i < stats.length - 1 && (
+                  <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.06)" }} aria-hidden="true" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>
