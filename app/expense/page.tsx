@@ -92,7 +92,7 @@ function SpendingBreakdown({ transactions }: { transactions: TransactionData[] }
 
   if (items.length === 0) return null
 
-  const colors = ["bg-slate-800", "bg-slate-500", "bg-slate-400", "bg-slate-300", "bg-slate-200"]
+  const colors = ["bg-red-500", "bg-red-400", "bg-red-300", "bg-red-200", "bg-red-100"]
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden"
@@ -258,8 +258,8 @@ export default function ExpensePage() {
         {/* ── Hero Stats ────────────────────────────────────────── */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white px-5 py-6 sm:px-7"
           style={{ boxShadow: "0 1px 4px 0 rgba(15,23,42,0.06)" }}>
-          {/* Accent bar — slate untuk expense */}
-          <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-slate-800" />
+          {/* Accent bar — merah untuk expense */}
+          <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl bg-red-500" />
 
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -272,9 +272,9 @@ export default function ExpensePage() {
                 {monthPctChange !== null && (
                   <>
                     <span className="h-3 w-px bg-slate-200" />
-                    {/* Untuk expense: naik = buruk (slate), turun = baik (emerald) */}
+                    {/* Untuk expense: naik = buruk (merah), turun = bagus (emerald) */}
                     <span className={`inline-flex items-center gap-1 text-xs font-semibold ${
-                      monthPctChange > 0 ? "text-slate-700" : "text-emerald-600"
+                      monthPctChange > 0 ? "text-red-600" : "text-emerald-600"
                     }`}>
                       <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
@@ -366,7 +366,7 @@ export default function ExpensePage() {
                 </p>
                 {filtered.length > 0 && (
                   <div className="flex items-center gap-2">
-                    {isFiltering && <span className="text-xs font-bold text-slate-800">−{fmtCompact(totalFiltered)}</span>}
+                    {isFiltering && <span className="text-xs font-bold text-red-600">−{fmtCompact(totalFiltered)}</span>}
                     <span className="text-[11px] text-slate-400">{filtered.length} transaksi</span>
                   </div>
                 )}
@@ -402,15 +402,15 @@ export default function ExpensePage() {
                     <div key={group.label}>
                       <div className="flex items-center justify-between bg-slate-50 px-5 py-2 border-b border-slate-100">
                         <p className="text-[11px] font-semibold text-slate-400">{group.label}</p>
-                        <p className="text-[11px] font-semibold text-slate-700">−{fmtCompact(group.total)}</p>
+                        <p className="text-[11px] font-semibold text-red-600">−{fmtCompact(group.total)}</p>
                       </div>
 
                       <div className="divide-y divide-slate-100">
                         {group.items.map(t => (
                           <div key={t.id}
                             className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/70 transition-colors">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100">
-                              <svg className="h-3.5 w-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50">
+                              <svg className="h-3.5 w-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                               </svg>
                             </div>
@@ -420,7 +420,7 @@ export default function ExpensePage() {
                               <p className="mt-0.5 text-xs text-slate-400">{fmtDate(t.transactionDate)}</p>
                             </div>
 
-                            <p className="shrink-0 text-sm font-bold text-slate-800">−{fmtCompact(t.amount)}</p>
+                            <p className="shrink-0 text-sm font-bold text-red-600">−{fmtCompact(t.amount)}</p>
 
                             <div className="flex shrink-0 items-center gap-0.5">
                               <button onClick={() => openEdit(t)}

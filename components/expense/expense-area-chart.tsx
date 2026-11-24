@@ -145,12 +145,12 @@ export function ExpenseAreaChart({ transactions }: ExpenseAreaChartProps) {
           >
             <defs>
               <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#0f172a" stopOpacity="0.12" />
-                <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+                <stop offset="0%"   stopColor="#ef4444" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
               </linearGradient>
             </defs>
             <path d={areaPath} fill="url(#expenseGrad)" />
-            <path d={linePath} fill="none" stroke="#0f172a" strokeWidth="2.5"
+            <path d={linePath} fill="none" stroke="#ef4444" strokeWidth="2.5"
               strokeLinecap="round" strokeLinejoin="round" />
             {points.length > 0 && (() => {
               const labelCount = Math.min(5, points.length)
@@ -170,7 +170,7 @@ export function ExpenseAreaChart({ transactions }: ExpenseAreaChartProps) {
               <g>
                 <line x1={hovered.x} x2={hovered.x} y1={PAD.top} y2={PAD.top + CH}
                   stroke="#cbd5e1" strokeWidth="1" strokeDasharray="3 4" />
-                <circle cx={hovered.x} cy={hovered.y} r="5" fill="#0f172a" stroke="white" strokeWidth="2.5" />
+                <circle cx={hovered.x} cy={hovered.y} r="5" fill="#ef4444" stroke="white" strokeWidth="2.5" />
               </g>
             )}
           </svg>
@@ -181,7 +181,7 @@ export function ExpenseAreaChart({ transactions }: ExpenseAreaChartProps) {
       {hovered && (
         <div className="border-t border-slate-100 px-5 py-3 flex items-center justify-between sm:px-6">
           <p className="text-xs text-slate-500">{fmtDateLabel(hovered.date)}</p>
-          <p className="text-sm font-bold text-slate-800">−{fmtFull(hovered.total)}</p>
+          <p className="text-sm font-bold text-red-600">−{fmtFull(hovered.total)}</p>
         </div>
       )}
     </div>
