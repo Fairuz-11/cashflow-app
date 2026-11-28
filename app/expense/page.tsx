@@ -6,6 +6,7 @@ import { TransactionFormModal } from "@/components/transactions/transaction-form
 import { deleteTransaction } from "@/lib/actions/transaction"
 import { TransactionData } from "@/types/transaction"
 import { ExpenseAreaChart } from "@/components/expense/expense-area-chart"
+import { ExportModal } from "@/components/ui/export-modal"
 import { useRouter } from "next/navigation"
 
 const ITEMS_PER_PAGE = 20
@@ -136,6 +137,7 @@ export default function ExpensePage() {
   const [page, setPage]                 = useState(1)
   const [search, setSearch]             = useState("")
   const [filter, setFilter]             = useState<TimeFilter>("all")
+  const [isExportOpen, setIsExportOpen] = useState(false)
 
   const fetchTransactions = useCallback(async () => {
     setIsLoading(true)
@@ -168,25 +170,7 @@ export default function ExpensePage() {
   const closeModal = () => { setIsModalOpen(false); setEditTarget(null) }
   const handleSuccess = () => { fetchTransactions(); router.refresh() }
 
-  const exportCSV = () => {
-    if (transactions.length === 0) return
-    const header = "Tanggal,Keterangan,Nominal"
-    const rows = transactions.map(t => {
-      const tanggal = new Date(t.transactionDate).toLocaleDateString("id-ID")
-      const keterangan = `"${t.description.replace(/"/g, '""')}"`
-      const nominal = t.amount
-      return `${tanggal},${keterangan},${nominal}`
-    })
-    const csv = [header, ...rows].join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    const bulan = new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })
-    a.href = url
-    a.download = `uang-keluar-${bulan}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const exportCSV = () => setIsExportOpen(true)
 
   const handleDelete = async () => {
     if (!deleteTarget) return
@@ -516,7 +500,14 @@ export default function ExpensePage() {
         </div>
       </div>
 
-      {/* Modals */}
+      {isExportOpen && (
+        <ExportModal
+          transactions={transactions}
+          type="expense"
+          onClose={() => setIsExportOpen(false)}
+        />
+      )}
+
       {deleteTarget && (
         <DeleteModal
           t={deleteTarget}
