@@ -180,6 +180,26 @@ export default function IncomePage() {
   const closeModal = () => { setIsModalOpen(false); setEditTarget(null) }
   const handleSuccess = () => { fetchTransactions(); router.refresh() }
 
+  const exportCSV = () => {
+    if (transactions.length === 0) return
+    const header = "Tanggal,Keterangan,Nominal"
+    const rows = transactions.map(t => {
+      const tanggal = new Date(t.transactionDate).toLocaleDateString("id-ID")
+      const keterangan = `"${t.description.replace(/"/g, '""')}"`
+      const nominal = t.amount
+      return `${tanggal},${keterangan},${nominal}`
+    })
+    const csv = [header, ...rows].join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    const bulan = new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" })
+    a.href = url
+    a.download = `uang-masuk-${bulan}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleDelete = async () => {
     if (!deleteTarget) return
     setDeletingId(deleteTarget.id)
@@ -262,15 +282,28 @@ export default function IncomePage() {
             <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Pemasukan</p>
             <h1 className="mt-0.5 text-xl font-bold text-slate-900 sm:text-2xl">Uang Masuk</h1>
           </div>
-          <button
-            onClick={openAdd}
-            className="flex shrink-0 items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white hover:bg-slate-800 active:scale-95 transition-all"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={exportCSV}
+              disabled={transactions.length === 0}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span className="hidden sm:inline">Export</span>
+            </button>
+            <button
+              onClick={openAdd}
+              className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white hover:bg-slate-800 active:scale-95 transition-all"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+              Tambah
+            </button>
+          </div>
         </div>
 
         {/* ── 2. Hero Stats ─────────────────────────────────────── */}
